@@ -50,28 +50,33 @@
         <!-- Центрируем навигацию -->
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Главная</a>
+            <a class="nav-link active" aria-current="page" href="{% url "main:index" %}">Головна</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Категории</a>
+            <a class="nav-link" href="{% url "goods:catalog" %}">Товари</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Бренды</a>
+            <a class="nav-link" href="{% url "main:about" %}">Про нас</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Контакты</a>
+            <a class="nav-link" href="{% url "main:contact" %}">Зв'язок</a>
           </li>
         </ul>
         <!-- Иконки справа -->
         <ul class="navbar-nav d-flex flex-row gap-3">
           <li class="nav-item">
-            <a class="nav-link" href="#" title="Аккаунт">
+            <a class="nav-link" href="#" title="Профіль">
               <i class="bi bi-person-circle fs-5"></i>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" title="Корзина">
+            <a class="nav-link" href="#" title="Кошик">
               <i class="bi bi-bag fs-5"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" title="Пошук">
+              <i class="bi bi-search fs-5"></i>
             </a>
           </li>
         </ul>

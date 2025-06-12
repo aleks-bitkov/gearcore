@@ -10,10 +10,6 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
-# from gearcore import goods
-
-#  cool comment
-
 urlpatterns = [
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     # path(
@@ -28,7 +24,7 @@ urlpatterns = [
     path("users/", include("gearcore.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    # path('catalog/', include('goods.urls', namespace='catalog')),
+    path('catalog/', include('gearcore.goods.urls', namespace='catalog')),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
