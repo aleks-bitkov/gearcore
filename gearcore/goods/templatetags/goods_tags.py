@@ -1,3 +1,5 @@
+from django.utils.http import urlencode
+
 from django import template
 
 from gearcore.goods.models import CategoryBrand
@@ -17,6 +19,12 @@ def categories_tag():
             categories_dict[model.category] = [model.brand]
 
     return categories_dict
+
+@register.simple_tag(takes_context=True)
+def change_params(context, **kwargs):
+    query = context.get('request').GET.dict()
+    query.update(kwargs)
+    return urlencode(query)
 
 
 # Альтернативный вариант с defaultdict (более компактно):

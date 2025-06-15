@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  this a single product page
+  <hr>
+  <b>{{ product.name }}</b> <br>
+  {{ product.description }}
+  <img src="{{ product.main_image.url }} "/>
+  {{ product.sell_price }}
+  <hr>
 {% endblock content %}

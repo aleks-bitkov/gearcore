@@ -2,70 +2,130 @@
 {% load static %}
 {% load humanize %}
 
+{% load goods_tags %}
+
 {% block title %}
   Каталог товарів | GearCore
 {% endblock title %}
 
 {% block content %}
-<div class="row">
-  <!-- Фильтры -->
-  <aside class="col-md-3 mb-4">
-    <h5 class="mb-3">Фільтри</h5>
-    <form method="get" action="{% url "goods:catalog" %}">
-      <div class="mb-3">
-        <label for="category" class="form-label">Категорія</label>
-        <select class="form-select" id="category">
-          <option value="">Усі</option>
-          <option>Круїзери</option>
-          <option>Спортбайки</option>
-          <option>Туристичні</option>
-          <option>Ендуро</option>
+
+  <div class="row">
+    <!-- Фильтры -->
+    <aside class="col-md-3 mb-4">
+      <h5 class="mb-3">Фільтри</h5>
+      <form method="get" action="{% url "goods:catalog" %}">
+        <div class="mb-3">
+          <label class="form-label">Категорія</label><br>
+          {% for category in categories %}
+            <label>
+              {{ category.name }}
+              <input name="category" value="{{ category.slug }}" type="checkbox"
+                     {% if category.slug in selected_categories %}checked{% endif %}>
+            </label><br>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Бренд</label><br>
+          {% for brand in brands %}
+            <label>
+              {{ brand }}
+              <input name="brand" value="{{ brand.slug }}" type="checkbox"
+                     aria-label="Checkbox for following text input"
+                     {% if brand.slug in selected_brands %}checked{% endif %}>
+            </label><br>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label for="priceRange" class="form-label">Ціна</label>
+          <input type="range" class="form-range" min="0" max="50000" id="priceRange">
+        </div>
+        <button type="submit" class="btn btn-outline-light w-100">Застосувати</button>
+      </form>
+    </aside>
+
+    <!-- Список товаров -->
+    <section class="col-md-9">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Товари</h5>
+        <select class="form-select w-auto" aria-label="Сортування">
+          <option selected>За замовчуванням</option>
+          <option value="price_asc">Ціна ↑</option>
+          <option value="price_desc">Ціна ↓</option>
         </select>
       </div>
-      <div class="mb-3">
-        <label for="priceRange" class="form-label">Ціна</label>
-        <input type="range" class="form-range" min="0" max="50000" id="priceRange">
-      </div>
-      <button type="submit" class="btn btn-outline-light w-100">Застосувати</button>
-    </form>
-  </aside>
 
-  <!-- Список товаров -->
-  <section class="col-md-9">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="mb-0">Товари</h5>
-      <select class="form-select w-auto" aria-label="Сортування">
-        <option selected>За замовчуванням</option>
-        <option value="price_asc">Ціна ↑</option>
-        <option value="price_desc">Ціна ↓</option>
-      </select>
-    </div>
-
-    <!-- Сетка товаров -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      {% for product in products %}
-        <div class="col">
-          <div class="card h-100 bg-dark text-light border-secondary">
-            <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
-            <div class="card-body d-flex flex-column">
-              <h6 class="card-title">{{ product.name }}</h6>
-              <p class="card-text text-muted small">{{ product.description }}</p>
-              <div class="mt-auto d-flex justify-content-between align-items-center">
-                <span class="fw-bold">{{ product.sell_price|intcomma }} ₴</span>
-                <a href="#" class="btn btn-sm btn-outline-light">
-                  Детальніше
-                </a>
+      <!-- Сетка товаров -->
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+          <div class="col">
+            <div class="card h-100 bg-dark text-light border-secondary">
+              <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body d-flex flex-column">
+                <h6 class="card-title">{{ product.name }}</h6>
+                <hr>
+                <p class="card-text small">{{ product.description|truncatechars:200 }}</p>
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">{{ product.sell_price|intcomma }} ₴</span>
+                  <a href="{% url "goods:product" product.slug %}" class="btn btn-sm btn-outline-light">
+                    Детальніше
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      {% empty %}
-        <div class="col">
-          <p>Наразі товари відсутні.</p>
-        </div>
-      {% endfor %}
-    </div>
-  </section>
-</div>
+        {% empty %}
+          <div class="col">
+            <p>Наразі товари відсутні.</p>
+          </div>
+        {% endfor %}
+      </div>
+      <!-- Пагінація -->
+      {% if page_obj.has_other_pages %}
+        <nav aria-label="Пагінація" class="mt-4">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link bg-dark text-light border-secondary"
+                   href="?page={% change_params page=page_obj.previous_page_number %}"
+                   aria-label="Попередня">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link bg-dark text-light border-secondary" aria-hidden="true">&laquo;</span>
+              </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active" aria-current="page">
+                  <span class="page-link bg-light text-dark border-secondary">{{ num }}</span>
+                </li>
+              {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                <li class="page-item">
+                  <a class="page-link bg-dark text-light border-secondary" href="?{% change_params page=num %}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link bg-dark text-light border-secondary" href="?page={% change_params page=page_obj.next_page_number %}">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link bg-dark text-light border-secondary" aria-hidden="true">&raquo;</span>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    </section>
+  </div>
 {% endblock content %}
 
