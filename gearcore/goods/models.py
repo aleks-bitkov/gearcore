@@ -57,6 +57,11 @@ class Products(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.RESTRICT, verbose_name='Категорія')
     brand = models.ForeignKey(Brands, on_delete=models.RESTRICT, verbose_name='Бренд')
 
+    def sell_price(self):
+        if self.discount:
+            return round(self.price - (self.price * self.discount / 100),3)
+        return self.price
+
     def save(self, *args, **kwargs):
         if not self.description:
             self.description = f"для \"{self.name}\" ще не було додано опису, вибачте за незручності"

@@ -10,3 +10,5 @@ document.addEventListener('click', function (e) {
         profileMenu.style.display = 'none';
     }
 });
+
+
