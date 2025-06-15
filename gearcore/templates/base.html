@@ -52,11 +52,11 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url "main:index" %}">Головна</a>
           </li>
+          {# ===========: [START] Goods navigation :========= #}
           <li class="nav-item dropdown d-flex align-items-center">
             <a href="{% url 'goods:catalog' %}" class="text-decoration-none color-inherit">Товари</a>
             <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false"></button>
-
             <ul class="dropdown-menu">
               {% categories_tag as categories %}
               {% for category, brands in categories.items %}
@@ -81,7 +81,7 @@
               {% endfor %}
             </ul>
           </li>
-
+          {# ===========: [END] Goods navigation :========= #}
           <li class="nav-item">
             <a class="nav-link" href="{% url "main:about" %}">Про нас</a>
           </li>
@@ -91,9 +91,8 @@
         </ul>
         <!-- Иконки справа -->
         <ul class="navbar-nav d-flex flex-row gap-3">
-
           <li class="nav-item">
-            <a class="nav-link" href="#" title="Вікно пошуку">
+            <a class="nav-link" href="#" title="Вікно пошуку" data-bs-toggle="modal" data-bs-target="#searchModal">
               <i class="bi bi-search fs-5"></i>
             </a>
           </li>
@@ -148,6 +147,32 @@
 <main class="main-content">
   <div class="container py-5">
     {% block content %}{% endblock content %}
+
+    {% block modal %}
+      <!-- Модальне вікно для пошуку -->
+      <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content shadow-lg rounded-4">
+            <div class="modal-header border-0">
+              <h5 class="modal-title" id="searchModalLabel">Пошук</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрити"></button>
+            </div>
+            <div class="modal-body">
+              <form method="get" action="{% url 'goods:search' %}">
+                <div class="input-group input-group-lg">
+                  <input type="text" class="form-control" name="q" placeholder="Що ви шукаєте? Наприклад, «шолом»"
+                         aria-label="Пошук" required>
+                  <button class="btn btn-dark" type="submit" title="Пошук">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endblock modal %}
+
   </div>
 </main>
 <!-- Футер -->

@@ -14,7 +14,10 @@
     <!-- Фильтры -->
     <aside class="col-md-3 mb-4">
       <h5 class="mb-3">Фільтри</h5>
-      <form method="get" action="{% url "goods:catalog" %}">
+      <form method="get" action="{% if request.GET.q %}{% url "goods:search" %}{% else %}{% url "goods:catalog" %}{% endif %}">
+      {% if request.GET.q %}
+        <input type="hidden" name="q" value="{{ request.GET.q }}">
+      {% endif %}
         <div class="mb-3">
           <label class="form-label">Категорія</label><br>
           {% for category in categories %}

@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 
 from gearcore.goods.models import Products, Categories, Brands
+from gearcore.goods.utils import q_search
 
 
 # Create your views here.
@@ -9,8 +10,13 @@ def catalog(request):
     page = request.GET.get('page', 1)
     filter_categories = request.GET.getlist('category', None)
     filter_brands = request.GET.getlist('brand', None)
+    query = request.GET.get('q', None)
 
-    products = Products.objects.all()
+    if query:
+        products = q_search(query)
+    else:
+        products = Products.objects.all()
+
     categories = Categories.objects.all()
     brands = Brands.objects.all()
 
@@ -20,7 +26,7 @@ def catalog(request):
     if filter_brands:
         products = products.filter(brand__slug__in=filter_brands)
 
-    paginator = Paginator(products, 2)
+    paginator = Paginator(products, 3)
     current_page = paginator.page(page)
 
     context = {
