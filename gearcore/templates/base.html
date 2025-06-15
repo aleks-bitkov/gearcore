@@ -64,9 +64,10 @@
         </ul>
         <!-- Иконки справа -->
         <ul class="navbar-nav d-flex flex-row gap-3">
+
           <li class="nav-item">
-            <a class="nav-link" href="#" title="Профіль">
-              <i class="bi bi-person-circle fs-5"></i>
+            <a class="nav-link" href="#" title="Вікно пошуку">
+              <i class="bi bi-search fs-5"></i>
             </a>
           </li>
           <li class="nav-item">
@@ -74,11 +75,41 @@
               <i class="bi bi-bag fs-5"></i>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" title="Вікно пошуку">
-              <i class="bi bi-search fs-5"></i>
-            </a>
-          </li>
+          {% if user.is_authenticated %}
+
+            {# ============: [START] Профіль авторизованого користувача :============== #}
+            <li class="nav-item dropdown position-relative" id="profileDropdown">
+              <a class="nav-link" href="#" title="Профіль" id="profileToggle">
+                <i class="bi bi-person-circle fs-5"></i>
+              </a>
+              <div class="dropdown-menu-custom" id="profileMenu">
+                {% if user.is_staff %}
+                  <a href="{% url "admin:index" %}" target="_blank"><i class="bi bi-gear-wide-connected"></i>Адмін панель</a>
+                {% endif %}
+                <a href="{% url 'users:detail' %}"><i class="bi bi-person"></i> Мій профіль</a>
+                <a href="#"><i class="bi bi-box-seam"></i> Мої замовлення</a>
+                <a href="#"><i class="bi bi-heart"></i> Обране</a>
+                <a href="#"><i class="bi bi-gear"></i> Налаштування</a>
+                <a href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a>
+              </div>
+            </li>
+            {# ============: [END] Профіль авторизованого користувача :============== #}
+
+          {% else %}
+
+            {# ============: [START] профіль НЕ авторизованого користувача :============== #}
+            <li class="nav-item dropdown position-relative" id="profileDropdown">
+              <a class="nav-link" href="#" title="Профіль" id="profileToggle">
+                <i class="bi bi-person-circle fs-5"></i>
+              </a>
+              <div class="dropdown-menu-custom" id="profileMenu">
+                <a href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a>
+                <a href="{% url 'account_signup' %}"><i class="bi bi-person-plus"></i> Зареєструватися</a>
+              </div>
+            </li>
+            {# ============: [END] профіль НЕ авторизованого користувача :============== #}
+
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -117,7 +148,7 @@
 
 
   <script defer src="{% static 'js/project.js' %}"></script>
-
+  <script defer src="{% static 'js/main/header.js' %}"></script>
 
 {% endblock javascript %}
 </body>

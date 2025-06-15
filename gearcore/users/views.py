@@ -12,17 +12,18 @@ from gearcore.users.models import User
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
-    slug_field = "id"
-    slug_url_kwarg = "id"
 
+    def get_object(self):
+        assert self.request.user.is_authenticated  # type guard
+        return self.request.user
 
 user_detail_view = UserDetailView.as_view()
 
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
-    fields = ["name"]
-    success_message = _("Information successfully updated")
+    fields = ["last_name", "first_name", "patronymic", "phone_number", "email"]
+    success_message = _("Інформацію успішно оновлено")
 
     def get_success_url(self) -> str:
         assert self.request.user.is_authenticated  # type guard
@@ -40,7 +41,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self) -> str:
-        return reverse("users:detail", kwargs={"pk": self.request.user.pk})
+        return reverse("users:detail")
 
 
 user_redirect_view = UserRedirectView.as_view()

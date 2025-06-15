@@ -1,0 +1,46 @@
+body {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+.user-sidebar {
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.user-sidebar a {
+  display: block;
+  color: #f0f0f0;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding-left: 0.5rem;
+}
+
+.user-sidebar a.active,
+.user-sidebar a:hover {
+  color: #ffd700;
+  background-color: #660000;
+  transform: scale(1.1);
+  border-radius: 8px;
+}
+
+.card {
+  background-color: #1c1c1c;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+
+.alert {
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.modal-content {
+  background-color: #1e1e1e;
+  color: #fff;
+  border-radius: 12px;
+}

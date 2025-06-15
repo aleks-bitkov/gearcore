@@ -7,6 +7,15 @@ class CategoriesAdmin(admin.ModelAdmin):
     list_display = ("name",)
     prepopulated_fields = {"slug": ("name",)}
 
-admin.site.register(Products)
-admin.site.register(Brands)
+
+@admin.register(Products)
+class ProductsAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
+
+@admin.register(Brands)
+class BrandsAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
+
 admin.site.register(CategoryBrand)

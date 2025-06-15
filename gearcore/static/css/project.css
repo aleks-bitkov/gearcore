@@ -42,3 +42,49 @@ footer {
   text-align: center;
   color: #aaaaaa;
 }
+
+/* ====: [START] style for profile dropdown menu :===== */
+.dropdown-menu-custom {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  min-width: 220px;
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+dropdown-menu-custom active{
+  display: flex;
+}
+
+.dropdown-menu-custom a {
+  padding: 10px 16px;
+  color: #f0f0f0;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-menu-custom a:hover {
+  background-color: #2a2a2a;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ====: [END] style for profile dropdown menu :====== */

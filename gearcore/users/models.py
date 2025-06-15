@@ -17,17 +17,24 @@ class User(AbstractUser):
     check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
-    # First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
-    first_name = None  # type: ignore[assignment]
-    last_name = None  # type: ignore[assignment]
+    username =  CharField(_("username"), max_length=150, unique=True, blank=True, null=True) #  no required
+    first_name = CharField(_("First Name"), max_length=255)
+    last_name = CharField(_("Last name"), max_length=255)
+    patronymic = CharField(_("Patronymic"), blank=True, null=True, max_length=255)
+    phone_number = CharField(_("Phone number"), unique=True, max_length=15)
     email = EmailField(_("email address"), unique=True)
-    username = None  # type: ignore[assignment]
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
 
     objects: ClassVar[UserManager] = UserManager()
+
+    class Meta:
+        verbose_name = _("користувача")
+        verbose_name_plural = _("Користувачі")
+
+    def __str__(self) -> str:
+        return self.email
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.
@@ -36,4 +43,4 @@ class User(AbstractUser):
             str: URL for user detail.
 
         """
-        return reverse("users:detail", kwargs={"pk": self.id})
+        return reverse("users:detail")
