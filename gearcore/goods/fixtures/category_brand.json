@@ -1,0 +1,26 @@
+[
+  {
+    "model": "goods.categorybrand",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "brand": 1
+    }
+  },
+  {
+    "model": "goods.categorybrand",
+    "pk": 2,
+    "fields": {
+      "category": 1,
+      "brand": 2
+    }
+  },
+  {
+    "model": "goods.categorybrand",
+    "pk": 3,
+    "fields": {
+      "category": 2,
+      "brand": 1
+    }
+  }
+]
