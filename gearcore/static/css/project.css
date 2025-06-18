@@ -124,7 +124,6 @@ dropdown-menu-custom active {
 .dropend .dropdown-menu {
   top: 0;
   left: 100%;
-  margin-left: .125em;
 }
 
 .dropdown:hover > .dropdown-menu,

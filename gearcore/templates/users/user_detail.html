@@ -2,71 +2,39 @@
 {% load static %}
 
 {% block content %}
-  <div class="row">
-    <!-- Сайдбар -->
-    <div class="col-lg-3 mb-4">
-      <div class="user-sidebar shadow-sm">
-        <div class="text-center mb-4">
-          <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle border border-secondary mb-2"
-               style="width: 80px; height: 80px;" alt="User avatar">
-          <h6 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h6>
-          <small class="text-muted">{{ user.email }}</small>
-        </div>
-        <a href="#" class="active"><i class="bi bi-person-circle me-2"></i> Профіль</a>
-        <a href="#"><i class="bi bi-box-seam me-2"></i> Замовлення</a>
-        <a href="#"><i class="bi bi-heart me-2"></i> Обране</a>
-        <a href="#"><i class="bi bi-gear me-2"></i> Налаштування</a>
-        {% if user.is_authenticated %}
-          <a href="{% url 'admin:index' %}"><i class="bi bi-gear-wide-connected"></i> Адмін панель</a>
-        {% endif %}
-        <a href="{% url 'account_logout' %}" class="text-danger"><i class="bi bi-box-arrow-right me-2"></i> Вийти</a>
-      </div>
-    </div>
 
-    <!-- Контент -->
-    <div class="col-lg-9">
-      <!-- Блок повідомлень -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрити"></button>
-          </div>
+  <!-- Основна інформація -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4 class="mb-3"><i class="bi bi-person"></i> Особиста інформація</h4>
+      <p><strong>Ім’я:</strong> {{ user.first_name }}</p>
+      <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
+      <p><strong>Побатькові:</strong> {{ user.patronymic }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Дата реєстрації:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+      <a class="btn btn-warning mt-3" href="{% url 'users:update' %}">
+        <i class="bi bi-pencil"></i> Редагувати профіль
+      </a>
+    </div>
+  </div>
+
+  <!-- Останні замовлення -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="mb-3"><i class="bi bi-bag"></i> Останні замовлення</h5>
+      <ul class="list-group list-group-flush">
+        {% for order in recent_orders %}
+          <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
+            #{{ order.id }} — {{ order.created_at|date:"d.m.Y" }}
+            <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
         {% endfor %}
-      {% endif %}
-
-      <!-- Основна інформація -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h4 class="mb-3"><i class="bi bi-person"></i> Особиста інформація</h4>
-          <p><strong>Ім’я:</strong> {{ user.first_name }}</p>
-          <p><strong>Прізвище:</strong> {{ user.last_name }}</p>
-          <p><strong>Побатькові:</strong> {{ user.patronymic }}</p>
-          <p><strong>Email:</strong> {{ user.email }}</p>
-          <p><strong>Дата реєстрації:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
-          <a class="btn btn-warning mt-3" href="{% url 'users:update' %}">
-            <i class="bi bi-pencil"></i> Редагувати профіль
-          </a>
-        </div>
-      </div>
-
-      <!-- Останні замовлення -->
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h5 class="mb-3"><i class="bi bi-bag"></i> Останні замовлення</h5>
-          <ul class="list-group list-group-flush">
-            {% for order in recent_orders %}
-              <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
-                #{{ order.id }} — {{ order.created_at|date:"d.m.Y" }}
-                <span class="badge bg-warning text-dark">{{ order.get_status_display }}</span>
-              </li>
-            {% empty %}
-              <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+      </ul>
     </div>
+  </div>
+  </div>
   </div>
 
 {% endblock %}

@@ -91,7 +91,8 @@ LOCAL_APPS = [
     "gearcore.users",
     # Your stuff: custom apps go here
     "gearcore.main",
-    "gearcore.goods"
+    "gearcore.goods",
+    "gearcore.carts"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
