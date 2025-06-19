@@ -1,6 +1,7 @@
 import logging
 
 from django.db import models
+from django.urls import reverse
 
 log = logging.getLogger(__name__)
 
@@ -74,10 +75,13 @@ class Products(models.Model):
 
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse("goods:product", kwargs={"slug": self.slug})
+
     class Meta:
         db_table = "product"
         verbose_name = "продукт"
-        verbose_name_plural = "Продукти"
+        verbose_name_plural = "продукти"
         ordering = ('name',)
 
 

@@ -22,13 +22,15 @@
         {% for cart in carts %}
           <tr>
             <td>
-              <img src="{{ cart.product.main_image.url }}" alt="{{ cart.product.name }}" class="img-thumbnail" style="width: 80px; height: auto;">
+              <img src="{{ cart.product.main_image.url }}" alt="{{ cart.product.name }}" class="img-thumbnail"
+                   style="width: 80px; height: auto;">
             </td>
             <td>{{ cart.product.name }}</td>
             <td>{{ cart.product.sell_price }} грн</td>
             <td>
               <div class="d-flex justify-content-center align-items-center gap-2">
-                <form method="post" action="{% url "cart:change"%}" data-cart-id="{{ cart.id  }}" class="formChangeCount">
+                <form method="post" action="{% url "cart:change" %}" data-cart-id="{{ cart.id }}"
+                      class="formChangeCount">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-sm btn-outline-light" data-action="decrement">−</button>
                   <span>{{ cart.quantity }}</span>
@@ -38,7 +40,7 @@
             </td>
             <td>{{ cart.product_price }} грн</td>
             <td>
-              <form method="post" action="{% url "cart:remove" %}" class="fromRemoveCart" data-cart-id="{{ cart.id  }}">
+              <form method="post" action="{% url "cart:remove" %}" class="fromRemoveCart" data-cart-id="{{ cart.id }}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-danger" title="Видалити">
                   <i class="bi bi-trash3-fill"></i>
@@ -52,10 +54,14 @@
     </div>
 
     <div class="d-flex justify-content-end align-items-center mt-4">
-      <h4 class="me-3">Підсумок: <strong>{{ carts.total_quantity }} товар(ів) на суму {{ carts.total_price }} грн</strong></h4>
-      <a href="#" class="btn btn-success btn-lg">
-        <i class="bi bi-credit-card"></i> Оформити замовлення
-      </a>
+      <h4 class="me-3">Підсумок: <strong>{{ carts.total_quantity }} товар(ів) на суму {{ carts.total_price }}
+        грн</strong></h4>
+
+      {% if not request.resolver_match.url_name == 'create' %}
+        <a href="{% url "orders:create" %}" class="btn btn-success btn-lg">
+          <i class="bi bi-credit-card"></i> Оформити замовлення
+        </a>
+      {% endif %}
     </div>
 
   {% else %}

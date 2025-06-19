@@ -104,7 +104,8 @@
             </a>
           </li>
           <li class="nav-item nav-item--cart">
-            <button class="nav-link" aria-label="Кошик" type="button" id="cartToggle">
+            <button class="nav-link" aria-label="Кошик" type="button"
+                    {% if not request.resolver_match.url_name == 'create' %}id="cartToggle"{% endif %}>
               <i class="bi bi-bag fs-5"></i>
             </button>
             <div id="cartWrapper" class="cartWrapper">
@@ -209,7 +210,6 @@
 
 
   <script defer src="{% static 'js/project.js' %}"></script>
-  <script defer src="{% static 'js/main/header.js' %}"></script>
   <script defer src="{% static 'js/main/header.js' %}"></script>
   <script defer src="{% static 'js/cart/cart.js' %}"></script>
 
