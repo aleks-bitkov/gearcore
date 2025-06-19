@@ -2,6 +2,9 @@
 
 {% block content %}
   <hr>
+  <a href="{% url "cart:add" product.slug %}">
+  додати до кошика
+  </a>
   <b>{{ product.name }}</b> <br>
   {{ product.description }}
   <img src="{{ product.main_image.url }} "/>

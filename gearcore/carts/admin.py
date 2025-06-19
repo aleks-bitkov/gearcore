@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from gearcore.carts.models import Cart
+
+admin.site.register(Cart)

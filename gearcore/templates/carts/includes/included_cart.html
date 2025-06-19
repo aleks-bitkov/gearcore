@@ -1,8 +1,11 @@
 {% load static %}
+{% load carts_tags %}
 
-<div class="container" style="background-color: greenyellow">
+{% user_cart request as carts %}
 
-  {% if cart.items %}
+<div class="container">
+
+  {% if carts %}
     <div class="table-responsive">
       <table class="table table-dark table-striped align-middle text-center">
         <thead class="table-secondary text-dark">
@@ -16,13 +19,13 @@
         </tr>
         </thead>
         <tbody>
-        {% for item in cart.items %}
+        {% for cart in carts %}
           <tr>
             <td>
-              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="width: 80px; height: auto;">
+              <img src="{{ cart.product.main_image.url }}" alt="{{ cart.product.name }}" class="img-thumbnail" style="width: 80px; height: auto;">
             </td>
-            <td>{{ item.product.name }}</td>
-            <td>{{ item.product.price }} грн</td>
+            <td>{{ cart.product.name }}</td>
+            <td>{{ cart.product.sell_price }} грн</td>
             <td>
               <div class="d-flex justify-content-center align-items-center gap-2">
                 <form method="post" action="#">
@@ -36,7 +39,7 @@
                 </form>
               </div>
             </td>
-            <td>{{ item.total_price }} грн</td>
+            <td>{{ cart.product_price }} грн</td>
             <td>
               <form method="post" action="#">
                 {% csrf_token %}
@@ -52,7 +55,7 @@
     </div>
 
     <div class="d-flex justify-content-end align-items-center mt-4">
-      <h4 class="me-3">Підсумок: <strong>{{ cart.total_price }} грн</strong></h4>
+      <h4 class="me-3">Підсумок: <strong>{{ carts.total_quantity }} товар(ів) на суму {{ carts.total_price }} грн</strong></h4>
       <a href="#" class="btn btn-success btn-lg">
         <i class="bi bi-credit-card"></i> Оформити замовлення
       </a>
