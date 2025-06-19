@@ -10,7 +10,9 @@ class CategoriesAdmin(admin.ModelAdmin):
 
 @admin.register(Products)
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("name", "quantity", "price", "discount")
+    list_editable = ("price", "discount",)
+    search_fields = ("name", "description")
     prepopulated_fields = {"slug": ("name",)}
 
 @admin.register(Brands)

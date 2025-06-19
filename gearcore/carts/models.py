@@ -33,9 +33,6 @@ class Cart(models.Model):
 
     def __str__(self):
         if self.user:
-            return f"Cart for {self.user.email}"
-        elif self.session_key:
-            return f"Cart for session {self.session_key[:8]}..."
-        else:
-            return f"Cart #{self.id}"
+            return f"Кошик користувача {self.user.name()} | Товар {self.product.name}"
+        return f"Анонімний кошик | Товар {self.product.name}"
 

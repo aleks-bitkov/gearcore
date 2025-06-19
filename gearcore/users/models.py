@@ -33,10 +33,18 @@ class User(AbstractUser):
         verbose_name = _("користувача")
         verbose_name_plural = _("Користувачі")
 
+    def name(self):
+        if self.first_name and self.last_name and self.patronymic:
+            return f"{self.last_name} {self.first_name[0].upper()}. {self.patronymic[0].upper()}"
+        elif self.first_name and self.last_name:
+            return f"{self.last_name} {self.first_name}"
+        elif self.email:
+            return str(self.email)
+        else:
+            return 'Анонімний користувач'
+
     def __str__(self) -> str:
-        if self.email:
-            return self.email
-        return "Анонімний користувач"
+        return self.name()
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.

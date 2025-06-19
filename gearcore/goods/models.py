@@ -79,3 +79,7 @@ class Products(models.Model):
         verbose_name = "продукт"
         verbose_name_plural = "Продукти"
         ordering = ('name',)
+
+
+    def __str__(self):
+        return self.name
