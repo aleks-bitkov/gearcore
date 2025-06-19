@@ -31,7 +31,8 @@
           <h6 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h6>
           <small class="text-muted">{{ user.email }}</small>
         </div>
-        <a href="{% url 'users:detail' %}" class="{% if request.resolver_match.url_name == 'detail' %}active{% endif %}">
+        <a href="{% url 'users:detail' %}"
+           class="{% if request.resolver_match.url_name == 'detail' %}active{% endif %}">
           <i class="bi bi-person-circle me-2"></i> Профіль
         </a>
         <a href="{% url 'users:cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">
@@ -66,6 +67,7 @@
     {% block javascript %}
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"
               crossorigin="anonymous"></script>
+      <script defer src="{% static 'js/cart/cart.js' %}"></script>
     {% endblock %}
 </body>
 </html>

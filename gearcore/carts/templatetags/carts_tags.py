@@ -1,11 +1,10 @@
 from django import template
 
-from gearcore.carts.models import Cart
+from gearcore.carts import utils
 
 register = template.Library()
 
-@register.simple_tag()
-def user_cart(request):
-    if request.user.is_authenticated():
-        return Cart.objects.filter(user=request.user)
-    return None
+@register.simple_tag
+def user_carts(request):
+    return utils.get_user_carts(request)
+

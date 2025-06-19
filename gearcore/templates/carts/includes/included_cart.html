@@ -1,7 +1,7 @@
 {% load static %}
 {% load carts_tags %}
 
-{% user_cart request as carts %}
+{% user_carts request as carts %}
 
 <div class="container">
 
@@ -28,20 +28,17 @@
             <td>{{ cart.product.sell_price }} грн</td>
             <td>
               <div class="d-flex justify-content-center align-items-center gap-2">
-                <form method="post" action="#">
+                <form method="post" action="{% url "cart:change"%}" data-cart-id="{{ cart.id  }}" class="formChangeCount">
                   {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-light">−</button>
-                </form>
-                <span>{{ item.quantity }}</span>
-                <form method="post" action="#">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-sm btn-outline-light">+</button>
+                  <button type="submit" class="btn btn-sm btn-outline-light" data-action="decrement">−</button>
+                  <span>{{ cart.quantity }}</span>
+                  <button type="submit" class="btn btn-sm btn-outline-light" data-action="increment">+</button>
                 </form>
               </div>
             </td>
             <td>{{ cart.product_price }} грн</td>
             <td>
-              <form method="post" action="#">
+              <form method="post" action="{% url "cart:remove" %}" class="fromRemoveCart" data-cart-id="{{ cart.id  }}">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-sm btn-danger" title="Видалити">
                   <i class="bi bi-trash3-fill"></i>
