@@ -7,7 +7,11 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
+from django.contrib import messages
 
+from allauth.account.views import LoginView as AllauthLoginView
+
+from gearcore.carts.models import Cart
 from gearcore.users.models import User
 
 
@@ -49,3 +53,21 @@ user_redirect_view = UserRedirectView.as_view()
 
 def user_cart(request):
     return render(request, "users/user_cart.html")
+
+
+class AccountLoginView(AllauthLoginView):
+    def form_valid(self, form):
+        session_key = self.request.session.session_key
+        response = super().form_valid(form)
+        user = self.request.user
+
+        if user.is_authenticated and session_key:
+            forgot_carts = Cart.objects.filter(user=user)
+
+            if forgot_carts.exists():
+                forgot_carts.delete()
+
+            Cart.objects.filter(session_key=session_key).update(user=user)
+
+
+        return response

@@ -10,6 +10,8 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from gearcore.users.views import AccountLoginView
+
 urlpatterns = [
     # path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     # path(
@@ -22,6 +24,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("gearcore.users.urls", namespace="users")),
+    path('accounts/login/', AccountLoginView.as_view(), name='account_login'),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path('catalog/', include('gearcore.goods.urls', namespace='catalog')),

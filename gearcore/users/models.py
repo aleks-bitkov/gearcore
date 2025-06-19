@@ -34,7 +34,9 @@ class User(AbstractUser):
         verbose_name_plural = _("Користувачі")
 
     def __str__(self) -> str:
-        return self.email
+        if self.email:
+            return self.email
+        return "Анонімний користувач"
 
     def get_absolute_url(self) -> str:
         """Get URL for user's detail view.
