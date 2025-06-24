@@ -4,8 +4,10 @@ from typing import ClassVar
 from django.contrib.auth.models import AbstractUser
 from django.db.models import CharField
 from django.db.models import EmailField
+from django.db.models import FileField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from docutils.nodes import label
 
 from .managers import UserManager
 
@@ -17,6 +19,7 @@ class User(AbstractUser):
     check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
+    image = FileField(_('Зображення'),upload_to='users', null=True, blank=True)
     username =  CharField(_("username"), max_length=150, unique=True, blank=True, null=True) #  no required
     first_name = CharField(_("First Name"), max_length=255)
     last_name = CharField(_("Last name"), max_length=255)

@@ -1,11 +1,11 @@
 from django.urls import path
 
-from gearcore.goods import views
+from gearcore.goods.views import product_view, catalog_view
 
 app_name = "goods"
 
 urlpatterns = [
-    path("", views.catalog, name="catalog"),
-    path("search/", views.catalog, name="search"),
-    path("product/<slug:slug>", views.product, name="product"),
+    path("", view=catalog_view, name="catalog"),
+    path("search/", view=catalog_view, name="search"),
+    path("product/<slug:slug>", view=product_view, name="product"),
 ]

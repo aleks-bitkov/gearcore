@@ -26,9 +26,15 @@
     <div class="col-lg-3 mb-4">
       <div class="user-sidebar shadow-sm">
         <div class="text-center mb-4">
-          <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle border border-secondary mb-2"
-               style="width: 80px; height: 80px;" alt="User avatar">
-          <h6 class="mb-0">{{ user.first_name }} {{ user.last_name }}</h6>
+
+          {% if user.image %}
+            <img src="{{ user.image.url }}" class="rounded-circle border border-secondary mb-2"
+               style="width: 80px; height: 80px;" alt="{{ user.name }}">
+          {% else %}
+             <img src="{% static 'images/users/default.png' %}" class="rounded-circle border border-secondary mb-2"
+               style="width: 80px; height: 80px;" alt="{{ user.name }}">
+          {% endif %}
+          <h6 class="mb-0">{{ user.name }}</h6>
           <small class="text-muted">{{ user.email }}</small>
         </div>
         <a href="{% url 'users:detail' %}"
@@ -36,9 +42,13 @@
           <i class="bi bi-person-circle me-2"></i> Профіль
         </a>
         <a href="{% url 'users:cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">
-          <i class="bi bi-box-seam me-2"></i>Кошик
+          <i class="bi bi-cart me-2"></i>
+          Кошик
         </a>
-        <a href="#"><i class="bi bi-box-seam me-2"></i>Замовлення</a>
+        <a href="{% url "users:orders" %}" class="{% if request.resolver_match.url_name == 'orders' %}active{% endif %}">
+          <i class="bi bi-box-seam me-2"></i>
+          Замовлення
+        </a>
         <a href="#"><i class="bi bi-heart me-2"></i> Обране</a>
         <a href="#"><i class="bi bi-gear me-2"></i> Налаштування</a>
         {% if user.is_authenticated %}
