@@ -167,3 +167,27 @@ dropdown-menu-custom active {
   background-color: #1c1c1c;
 }
 
+/* Тёмный alert */
+.alert-dark-custom {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  border: 1px solid #444;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Анимация появления */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.alert {
+  animation: fadeInSlide 0.4s ease-in-out;
+}
+
+

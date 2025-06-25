@@ -1,4 +1,5 @@
 {% load static i18n %}
+{% load cache %}
 {% load goods_tags %}
 
 <!DOCTYPE html>
@@ -31,11 +32,11 @@
 
 
     <link href="{% static 'css/project.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/main/slider.css' %}" rel="stylesheet"/>
 
 
   {% endblock css %}
 </head>
-
 <body class="{% block bodyclass %}{% endblock bodyclass %}">
 <!-- Хедер -->
 <header>
@@ -58,34 +59,37 @@
             <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false"></button>
             <ul class="dropdown-menu">
-              {% categories_tag as categories %}
-              {% for category, brands in categories.items %}
-                <li class="nav-item {% if brands %}dropend{% endif %}">
-                  {% if brands %}
-                    <div class="d-flex justify-content-between align-items-center">
+              {% cache 60 catalog_categories %}
+                {% categories_tag as categories %}
+                {% for category, brands in categories.items %}
+                  <li class="nav-item {% if brands %}dropend{% endif %}">
+                    {% if brands %}
+                      <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'goods:catalog' %}?category={{ category.slug }}" class="dropdown-item">
+                          {{ category.name }}
+                        </a>
+                        <button class="dropdown-toggle btn btn-sm border-0 bg-transparent ms-2"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"></button>
+                      </div>
+                      <ul class="dropdown-menu">
+                        {% for brand in brands %}
+                          <li>
+                            <a class="dropdown-item"
+                               href="{% url 'goods:catalog' %}?category={{ category.slug }}&brand={{ brand.slug }}">
+                              {{ brand.name }}
+                            </a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% else %}
                       <a href="{% url 'goods:catalog' %}?category={{ category.slug }}" class="dropdown-item">
                         {{ category.name }}
                       </a>
-                      <button class="dropdown-toggle btn btn-sm border-0 bg-transparent ms-2" data-bs-toggle="dropdown"
-                              aria-expanded="false"></button>
-                    </div>
-                    <ul class="dropdown-menu">
-                      {% for brand in brands %}
-                        <li>
-                          <a class="dropdown-item"
-                             href="{% url 'goods:catalog' %}?category={{ category.slug }}&brand={{ brand.slug }}">
-                            {{ brand.name }}
-                          </a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  {% else %}
-                    <a href="{% url 'goods:catalog' %}?category={{ category.slug }}" class="dropdown-item">
-                      {{ category.name }}
-                    </a>
-                  {% endif %}
-                </li>
-              {% endfor %}
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              {% endcache catalog_categories %}
             </ul>
           </li>
           {# ===========: [END] Goods navigation :========= #}
@@ -154,8 +158,15 @@
   </nav>
 </header>
 
+{% block messages %}
+  <div id="alert-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;"></div>
+{% endblock %}
+
 <!-- Основной контент -->
 <main class="main-content">
+
+  {% block content_outer_container %}{% endblock content_outer_container%}
+
   <div class="container py-5">
     {% block content %}{% endblock content %}
 

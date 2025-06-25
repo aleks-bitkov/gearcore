@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
+from gearcore.main.models import Slide
+
 
 class IndexView(TemplateView):
     template_name = "main/index.html"
@@ -9,6 +11,11 @@ class IndexView(TemplateView):
         context = super(IndexView, self).get_context_data(**kwargs)
         context["title"] = "GearCore | Головна"
         context["content"] = "GearCore - магазин байків"
+        
+        slides = Slide.objects.all()
+        
+        print(f'\n\n\n\n\n{slides=}\n\n\n\n\n\n')
+        context["slides"] = slides        
         return context
 
 index_view = IndexView.as_view()

@@ -1,5 +1,6 @@
 {% extends 'users/base.html' %}
 {% load static %}
+{% load cache %}
 
 {% block content %}
 
@@ -12,15 +13,6 @@
         {{ form.as_p }}
         <button type="submit">оновити дані</button>
       </form>
-
-      {#      <p><strong>Ім’я:</strong> {{ user.first_name }}</p>#}
-      {#      <p><strong>Прізвище:</strong> {{ user.last_name }}</p>#}
-      {#      <p><strong>Побатькові:</strong> {{ user.patronymic }}</p>#}
-      {#      <p><strong>Email:</strong> {{ user.email }}</p>#}
-      {#      <p><strong>Дата реєстрації:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>#}
-      {#      <a class="btn btn-warning mt-3" href="{% url 'users:update' %}">#}
-      {#        <i class="bi bi-pencil"></i> Редагувати профіль#}
-      {#      </a>#}
     </div>
   </div>
 
@@ -29,14 +21,16 @@
     <div class="card-body">
       <h5 class="mb-3"><i class="bi bi-bag"></i> Останні замовлення</h5>
       <ul class="list-group list-group-flush">
-        {% for order in orders %}
-          <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
-            #{{ order.id }} — {{ order.created_timestamp|date:"d.m.Y" }}
-            <span class="badge bg-warning text-dark">{{ order.status }}</span>
-          </li>
-        {% empty %}
-          <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
-        {% endfor %}
+{#        {% cache 60 user_orders user.email %}#}
+          {% for order in orders %}
+            <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
+              #{{ order.id }} — {{ order.created_timestamp|date:"d.m.Y" }}
+              <span class="badge bg-warning text-dark">{{ order.status }}</span>
+            </li>
+          {% empty %}
+            <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
+          {% endfor %}
+{#        {% endcache %}#}
       </ul>
     </div>
   </div>

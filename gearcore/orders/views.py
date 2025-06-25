@@ -77,7 +77,7 @@ class CreateOrderView(LoginRequiredMixin, FormView):
         context['title'] = 'GearCore | Офоромлення замовлення'
         return context
 
-create_oreder_view = CreateOrderView.as_view()
+create_order_view = CreateOrderView.as_view()
 # @login_required
 # def create_order(request):
 #     form = None

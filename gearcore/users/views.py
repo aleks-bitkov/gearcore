@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -13,13 +14,14 @@ from allauth.account.views import LoginView as AllauthLoginView
 from rest_framework.reverse import reverse_lazy
 
 from gearcore.carts.models import Cart
+from gearcore.common.mixins import CacheMixin
 from gearcore.orders.models import Order, OrderItem
 from gearcore.users.models import User
 
 from gearcore.users.forms import UserProfileForm
 
 
-class UserProfileView(LoginRequiredMixin, UpdateView):
+class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
     template_name = 'users/user_detail.html'
     model = User
     form_class = UserProfileForm
@@ -35,11 +37,13 @@ class UserProfileView(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         orders = Order.objects.filter(user=self.request.user).prefetch_related(
             Prefetch("orderitem_set", queryset=OrderItem.objects.select_related("product")))
 
-        context['orders'] = orders
+        context['orders'] = self.set_get_cache(orders, f"user_{self.request.user.id}_orders", 60)
         return context
+
 
 user_profile_view = UserProfileView.as_view()
 
@@ -92,7 +96,6 @@ class AccountLoginView(AllauthLoginView):
         if redirect_page and redirect_page != reverse('account_logout'):
             return redirect_page
         return reverse_lazy('users:redirect')
-
 
     def form_valid(self, form):
         session_key = self.request.session.session_key

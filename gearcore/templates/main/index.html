@@ -4,6 +4,31 @@
   {{ title }}
 {% endblock title %}
 
+{% block content_outer_container %}
+<div id="fullscreenCarousel" class="carousel slide fullscreen-slider" data-bs-ride="carousel">
+    <!-- Индикаторы (точки) -->
+    <div class="carousel-indicators">
+        {% for slide in slides %}
+        <button type="button" data-bs-target="#fullscreenCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Слайд {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+
+    <div class="carousel-inner h-100">
+        {% for slide in slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
+            <img src="{{ slide.image.url }}" class="d-block w-100" alt="Слайд {{ forloop.counter }}">
+            <div class="carousel-caption d-none d-md-block">
+                <h2>{{ slide.title|default:"Слайд "|add:forloop.counter }}</h2>
+                <p></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content_outer_container %}
+
+
 {% block content %}
-  {{ content }}
+
 {% endblock content %}
