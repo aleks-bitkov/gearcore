@@ -81,7 +81,8 @@ def user_cart(request):
 
 def user_orders(request):
     orders = Order.objects.filter(user=request.user).prefetch_related(
-        Prefetch("orderitem_set", queryset=OrderItem.objects.select_related("product")))
+        Prefetch("orderitem_set",
+                 queryset=OrderItem.objects.select_related("product").prefetch_related('product__images')))
 
     context = {
         "orders": orders,

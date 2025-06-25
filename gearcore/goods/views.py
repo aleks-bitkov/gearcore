@@ -1,14 +1,11 @@
-from django.core.paginator import Paginator
-from django.shortcuts import render
 from django.views.generic import DetailView, ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
 
-from gearcore.goods.models import Products, Categories, Brands
+from gearcore.goods.models import Motorcycle, Categories, Brands
 from gearcore.goods.utils import q_search
 
 
 class CatalogView(ListView):
-    model = Products
+    model = Motorcycle
     template_name = "goods/catalog.html"
     context_object_name = "products"
     paginate_by = 3
@@ -22,7 +19,7 @@ class CatalogView(ListView):
         if query:
             products = q_search(query)
         else:
-            products = super(CatalogView, self).get_queryset()
+            products = Motorcycle.objects.prefetch_related("images").all()
 
         if filter_brands:
             products = super(CatalogView, self).get_queryset().filter(brand__slug__in=filter_brands)
@@ -86,7 +83,7 @@ class ProductView(DetailView):
     context_object_name = "product"
 
     def get_object(self, queryset=None):
-        product = Products.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
+        product = Motorcycle.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
         return product
 
     def get_context_data(self, **kwargs):

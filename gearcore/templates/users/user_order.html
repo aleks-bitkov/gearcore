@@ -6,7 +6,7 @@
     {{ order.status }}<br>
     {% for item in order.orderitem_set.all %}
       {{ item.product.name }}<br>
-      <img src="{{ item.product.main_image.url }}" width="200px" height="200px"><br>
+      <img src="{{ item.product.main_image_obj.image.url }}" width="200px" height="200px"><br>
       <a href="{% url "goods:product" item.product.slug %}">переглянути</a>
 
     {% endfor %}

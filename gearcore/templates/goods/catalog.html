@@ -82,7 +82,7 @@
                     </div>
 
                     <a href="{% url 'goods:product' product.slug %}">
-                      <img src="{{ product.main_image.url }}" class="card-img-top object-fit-cover"
+                      <img src="{{ product.main_image_obj.image.url }}" class="card-img-top object-fit-cover"
                            alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
                     </a>
 

@@ -1,1 +1,0 @@
-[{"model": "goods.brands", "pk": 1, "fields": {"name": "Kawasaki", "slug": "kawasaki"}}, {"model": "goods.brands", "pk": 2, "fields": {"name": "Aprilia", "slug": "aprilia"}}]

@@ -2,21 +2,27 @@ from django.utils.http import urlencode
 
 from django import template
 
-from gearcore.goods.models import CategoryBrand
+from gearcore.goods.models import Motorcycle
 
 register = template.Library()
 
 
 @register.simple_tag()
 def categories_tag():
-    raw_categories = CategoryBrand.objects.all()
+    motorcycles = Motorcycle.objects.select_related('category', 'brand').all()
+
     categories_dict = {}
 
-    for model in raw_categories:
-        if model.category in categories_dict:
-            categories_dict[model.category].append(model.brand)
-        else:
-            categories_dict[model.category] = [model.brand]
+    for moto in motorcycles:
+        category = moto.category
+        brand = moto.brand
+
+        if category not in categories_dict:
+            categories_dict[category] = set()
+        categories_dict[category].add(brand)
+
+    for category in categories_dict:
+        categories_dict[category] = list(categories_dict[category])
 
     return categories_dict
 

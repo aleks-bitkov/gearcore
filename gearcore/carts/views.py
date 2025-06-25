@@ -7,7 +7,7 @@ from django.views import View
 
 from gearcore.carts.models import Cart
 from gearcore.carts import utils
-from gearcore.goods.models import Products
+from gearcore.goods.models import Motorcycle
 from gearcore.carts.mixins import CardMixin
 
 
@@ -15,7 +15,7 @@ class CartAddView(CardMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         slug = data.get('slug', None)
-        product = Products.objects.get(slug=slug)
+        product = Motorcycle.objects.get(slug=slug)
 
         cart = self.get_cart(request, product=product)
 

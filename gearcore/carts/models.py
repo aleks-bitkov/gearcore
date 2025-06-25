@@ -1,6 +1,6 @@
 from django.db import models
 
-from gearcore.goods.models import Products
+from gearcore.goods.models import Motorcycle
 from gearcore.users.models import User
 
 class CartQuerySet(models.QuerySet):
@@ -16,7 +16,7 @@ class CartQuerySet(models.QuerySet):
 
 class Cart(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Користувач')
-    product = models.ForeignKey(to=Products, on_delete=models.RESTRICT, verbose_name='Товар')
+    product = models.ForeignKey(to=Motorcycle, on_delete=models.RESTRICT, verbose_name='Товар')
     quantity = models.PositiveIntegerField(default=0, verbose_name='Кількість')
     session_key = models.CharField(blank=True, null=True, max_length=32, verbose_name='Ключ сесії')
     created_timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Дата додавання')

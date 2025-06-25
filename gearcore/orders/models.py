@@ -1,6 +1,6 @@
 from django.db import models
 
-from gearcore.goods.models import Products
+from gearcore.goods.models import Motorcycle
 from gearcore.users.models import User
 
 
@@ -35,7 +35,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(to=Order, on_delete=models.CASCADE, verbose_name='Замовлення')
-    product = models.ForeignKey(to=Products, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None,
+    product = models.ForeignKey(to=Motorcycle, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None,
                                 verbose_name='Товар')
     name = models.CharField(max_length=150, verbose_name='Назва')
     price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name='Ціна')
