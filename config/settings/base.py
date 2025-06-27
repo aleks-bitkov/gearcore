@@ -93,7 +93,8 @@ LOCAL_APPS = [
     "gearcore.main",
     "gearcore.goods",
     "gearcore.carts",
-    "gearcore.orders"
+    "gearcore.orders",
+    "gearcore.wishlist",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

@@ -3,6 +3,7 @@
 {% load humanize %}
 
 {% load goods_tags %}
+{% load wishlist_tags %}
 
 {% block css %}
   {{ block.super }}
@@ -71,9 +72,18 @@
             <div class="card h-100 bg-dark text-light border-secondary position-relative">
                     <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1"
                         style="background: rgba(0, 0, 0, 0.6); border-bottom-left-radius: 0.5rem;">
-                        <button class="btn btn-sm btn-outline-light mb-2" title="До улюблених">
-                          <i class="bi bi-heart"></i> {# bi-heart-fill if active #}
+                      <form action="{% url "wishlist:add" %}" method="post" class="heart-form" data-product-slug = {{ product.slug }}>
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-light mb-2 heart-btn" title="До улюблених" type="submit">
+                          {% user_wishlist_ids as wishlist_ids %}
+                          {% if product.id in  wishlist_ids%}
+                            <i class="bi bi-heart-fill"></i>
+                          {% else %}
+                            <i class="bi bi-heart"></i>
+                          {% endif %}
                         </button>
+                      </form>
+
                         <button class="btn btn-sm btn-outline-light mb-2" title="Змінити колір"><i
                                 class="bi bi-palette"></i></button>
                         <button class="btn btn-sm btn-outline-light" title="Порівняти"> {# btn-primary active #}

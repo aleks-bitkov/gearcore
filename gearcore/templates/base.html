@@ -130,7 +130,7 @@
                 {% endif %}
                 <a href="{% url 'users:detail' %}"><i class="bi bi-person"></i> Мій профіль</a>
                 <a href="#"><i class="bi bi-box-seam"></i> Мої замовлення</a>
-                <a href="#"><i class="bi bi-heart"></i> Обране</a>
+                <a href="{% url 'users:wishlist' %}"><i class="bi bi-heart"></i> Обране</a>
                 <a href="#"><i class="bi bi-gear"></i> Налаштування</a>
                 <a href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a>
               </div>
@@ -223,6 +223,7 @@
   <script defer src="{% static 'js/project.js' %}"></script>
   <script defer src="{% static 'js/main/header.js' %}"></script>
   <script defer src="{% static 'js/cart/cart.js' %}"></script>
+  <script defer src="{% static 'js/wishlist/wishlist.js' %}"></script>
 
 {% endblock javascript %}
 </body>

@@ -30,6 +30,7 @@ urlpatterns = [
     path('catalog/', include('gearcore.goods.urls', namespace='catalog')),
     path('cart/', include('gearcore.carts.urls', namespace='cart')),
     path('orders/', include('gearcore.orders.urls', namespace='orders')),
+    path('wishlists/', include('gearcore.wishlist.urls', namespace='wishlist')),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

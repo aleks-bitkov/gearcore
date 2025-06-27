@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{% block title %}Кабінет користувача | GearCore{% endblock %}</title>
 
-
-
   {% block css %}
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
@@ -49,7 +47,9 @@
           <i class="bi bi-box-seam me-2"></i>
           Замовлення
         </a>
-        <a href="#"><i class="bi bi-heart me-2"></i> Обране</a>
+        <a href="{% url "users:wishlist" %}" class="{% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}">
+          <i class="bi bi-heart me-2"></i> Обране
+        </a>
         <a href="#"><i class="bi bi-gear me-2"></i> Налаштування</a>
         {% if user.is_authenticated %}
           <a href="{% url 'admin:index' %}"><i class="bi bi-gear-wide-connected"></i> Адмін панель</a>
@@ -78,6 +78,7 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"
               crossorigin="anonymous"></script>
       <script defer src="{% static 'js/cart/cart.js' %}"></script>
+      <script defer src="{% static 'js/wishlist/wishlist.js' %}"></script>
     {% endblock %}
 </body>
 </html>

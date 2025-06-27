@@ -6,7 +6,7 @@ from django.db.models import QuerySet, Prefetch
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView
+from django.views.generic import DetailView, TemplateView
 from django.views.generic import RedirectView
 from django.views.generic import UpdateView
 
@@ -89,6 +89,15 @@ def user_orders(request):
     }
 
     return render(request, 'users/user_order.html', context)
+
+class UserWishlistView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/user_wishlist.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+user_wishlist_view = UserWishlistView.as_view()
 
 
 class AccountLoginView(AllauthLoginView):
