@@ -1,19 +1,19 @@
 from django.db import models
 from django.urls import reverse
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Назва')
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, verbose_name='URL')
 
     class Meta:
-        # db_table = "category"
+        db_table = "category"
         verbose_name = "категорію"
         verbose_name_plural = "Категорії"
 
     def __str__(self):
         return self.name
 
-class Brands(models.Model):
+class Brand(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name='Назва бренду')
     slug = models.SlugField(max_length=70, unique=True, blank=True, null=True, verbose_name='URL')
 
@@ -54,9 +54,29 @@ class Motorcycle(models.Model):
 
     is_new = models.BooleanField("Товар новий?", default=False, help_text="Позначити як новий товар")
 
-    category = models.ForeignKey(Categories, on_delete=models.RESTRICT, verbose_name='Категорія')
-    brand = models.ForeignKey(Brands, on_delete=models.RESTRICT, verbose_name='Бренд')
+    category = models.ForeignKey(Category, on_delete=models.RESTRICT, verbose_name='Категорія')
+    brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, verbose_name='Бренд')
     colors = models.ManyToManyField(Color, through='MotorcycleVariant', verbose_name='Доступні кольори')
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['category', 'brand']),
+        ]
+        verbose_name = "Мотоцикл"
+        verbose_name_plural = "Мотоцикли"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("goods:product", kwargs={"slug": self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.description:
+            self.description = f"для \"{self.name}\" ще не було додано опису, вибачте за незручності"
+
+        super().save(*args, **kwargs)
 
     def sell_price(self):
         if self.discount:
@@ -80,28 +100,6 @@ class Motorcycle(models.Model):
         if default_variant:
             return default_variant.images.filter(is_main=True).first()
         return None
-
-    def save(self, *args, **kwargs):
-        if not self.description:
-            self.description = f"для \"{self.name}\" ще не було додано опису, вибачте за незручності"
-
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse("goods:product", kwargs={"slug": self.slug})
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['category', 'brand']),
-        ]
-        verbose_name = "Мотоцикл"
-        verbose_name_plural = "Мотоцикли"
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return self.name
-
-
 
 class Engine(models.Model):
     """Характеристики двигуна"""
@@ -183,7 +181,7 @@ class SuspensionSystem(models.Model):
         ('моноаморт', 'Моноаморт'),
     ]
 
-    motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='chassis',
+    motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='suspensions',
                                       verbose_name="Мотоцикл")
     # Підвіска
     front_suspension = models.CharField("Передня підвіска", max_length=50, choices=SUSPENSION_TYPE_CHOICES)
@@ -200,13 +198,16 @@ class SuspensionSystem(models.Model):
         verbose_name = "Ходова частина"
         verbose_name_plural = "Ходові частини"
 
+    def __str__(self):
+        return f"ходова частина {self.motorcycle}"
+
 class BreakSystem(models.Model):
     BRAKE_TYPE_CHOICES = [
         ('дисковий', 'Дисковий'),
         ('барабанний', 'Барабанний'),
     ]
 
-    motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='brakes',
+    motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='breaks',
                                       verbose_name="Мотоцикл")
 
     # Гальма

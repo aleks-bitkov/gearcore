@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-28 07:53+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != "
+"11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % "
+"100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || "
+"(n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+#: config/settings/base.py:33
+msgid "Ukrainian"
+msgstr ""
+
+#: config/settings/base.py:34
+msgid "English"
+msgstr ""
+
+#: gearcore/templates/allauth/layouts/entrance.html:8
+msgid "Sign In"
+msgstr ""
+
+#: gearcore/templates/main/index.html:34
+msgid "Welcome to the site!"
+msgstr ""
+
+#: gearcore/users/admin.py:26
+msgid "Personal info"
+msgstr ""
+
+#: gearcore/users/admin.py:28
+msgid "Permissions"
+msgstr ""
+
+#: gearcore/users/admin.py:39
+msgid "Important dates"
+msgstr ""
+
+#: gearcore/users/apps.py:9 gearcore/users/models.py:37
+msgid "Користувачі"
+msgstr ""
+
+#: gearcore/users/forms.py:30 gearcore/users/tests/test_forms.py:35
+msgid "This email has already been taken."
+msgstr ""
+
+#: gearcore/users/forms.py:57
+msgid "Phone number can`t contains letters."
+msgstr ""
+
+#: gearcore/users/forms.py:60
+msgid "Phone number must contains only ten numbers"
+msgstr ""
+
+#: gearcore/users/models.py:22
+msgid "Зображення"
+msgstr ""
+
+#: gearcore/users/models.py:23
+msgid "username"
+msgstr ""
+
+#: gearcore/users/models.py:24
+msgid "First Name"
+msgstr ""
+
+#: gearcore/users/models.py:25
+msgid "Last name"
+msgstr ""
+
+#: gearcore/users/models.py:26
+msgid "Patronymic"
+msgstr ""
+
+#: gearcore/users/models.py:27
+msgid "Phone number"
+msgstr ""
+
+#: gearcore/users/models.py:28
+msgid "email address"
+msgstr ""
+
+#: gearcore/users/models.py:36
+msgid "користувача"
+msgstr ""
+
+#: gearcore/users/tests/test_views.py:72
+msgid "Information successfully updated"
+msgstr ""
+
+#: gearcore/users/views.py:35
+msgid "Дані профілю успішно оновлено"
+msgstr ""
+
+#: gearcore/users/views.py:54
+msgid "Інформацію успішно оновлено"
+msgstr ""

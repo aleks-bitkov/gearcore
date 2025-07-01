@@ -5,7 +5,7 @@ from django.views.generic import DetailView, ListView
 from django.views import View
 from django.db.models import Exists, OuterRef
 
-from gearcore.goods.models import Motorcycle, Categories, Brands, VariantImage, MotorcycleVariant
+from gearcore.goods.models import Motorcycle, Category, Brand, VariantImage, MotorcycleVariant
 from gearcore.goods.utils import q_search
 from gearcore.wishlist.models import WishlistItem
 
@@ -48,8 +48,8 @@ class CatalogView(ListView):
     def get_context_data(self, **kwargs):
         context = super(CatalogView, self).get_context_data(**kwargs)
         context["title"] = "GearCore | Усі товари"
-        context["brands"] = Brands.objects.all()
-        context["categories"] = Categories.objects.all()
+        context["brands"] = Brand.objects.all()
+        context["categories"] = Category.objects.all()
         context["selected_categories"] = self.selected_categories
         context["selected_brands"] = self.selected_brands
         return context

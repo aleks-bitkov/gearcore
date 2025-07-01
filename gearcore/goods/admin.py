@@ -1,16 +1,16 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from gearcore.goods.models import (Categories, Brands, Motorcycle, Engine, Transmission, VariantImage,
-                                   Color, MotorcycleVariant)
+from gearcore.goods.models import (Category, Brand, Motorcycle, Engine, Transmission, VariantImage,
+                                   Color, MotorcycleVariant, SuspensionSystem, BreakSystem)
 
 
-@admin.register(Categories)
+@admin.register(Category)
 class CategoriesAdmin(admin.ModelAdmin):
     list_display = ("name",)
     prepopulated_fields = {"slug": ("name",)}
 
 
-@admin.register(Brands)
+@admin.register(Brand)
 class BrandsAdmin(admin.ModelAdmin):
     list_display = ("name",)
     prepopulated_fields = {"slug": ("name",)}
@@ -42,11 +42,18 @@ class TransmissionInline(admin.StackedInline):
     model = Transmission
     extra = 0
 
-
 class MotorcycleVariantInline(admin.TabularInline):
     model = MotorcycleVariant
     extra = 1
     fields = ('color', 'price_modifier', 'quantity', 'is_available')
+
+class SuspensionSystemInline(admin.StackedInline):
+    model = SuspensionSystem
+    extra = 0
+
+class BreakSystemInline(admin.StackedInline):
+    model = BreakSystem
+    extra = 0
 
 
 class VariantImageInline(admin.TabularInline):
@@ -72,7 +79,9 @@ class MotorcycleAdmin(admin.ModelAdmin):
     inlines = [
         EngineInline,
         TransmissionInline,
-        MotorcycleVariantInline
+        MotorcycleVariantInline,
+        SuspensionSystemInline,
+        BreakSystemInline
     ]
     list_display = ['name', 'brand', 'price', 'is_new']
     prepopulated_fields = {"slug": ("name",)}
