@@ -1,7 +1,8 @@
 from django.urls import path
 
 from gearcore.main import views
-from gearcore.main.views import (index_view, about_view)
+from gearcore.main.views import about_view
+from gearcore.main.views import index_view
 
 app_name = "main"
 urlpatterns = [

@@ -29,9 +29,10 @@ TIME_ZONE = "Europe/Kiev"
 LANGUAGE_CODE = "uk"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
 from django.utils.translation import gettext_lazy as _
+
 LANGUAGES = [
-    ('uk', _('Ukrainian')),
-    ('en', _('English')),
+    ("uk", _("Ukrainian")),
+    ("en", _("English")),
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -68,7 +69,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.humanize", # Handy template tags
+    "django.contrib.humanize",  # Handy template tags
     "django.contrib.admin",
     "django.contrib.postgres",
     "django.forms",
@@ -240,7 +241,12 @@ EMAIL_TIMEOUT = 5
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Магазин мотоциклів для тих, хто відчуває свободу на повну. Від круїзерів до спортбайків, від туристичних моделей до ендуро — ми зібрали все, що потрібно справжнім райдерам. Якісна техніка, екіпірування, аксесуари та обслуговування — GearCore об’єднує потужність, стиль і дух дороги.aleks""", "gearcore@gmail.com")]
+ADMINS = [
+    (
+        """Магазин мотоциклів для тих, хто відчуває свободу на повну. Від круїзерів до спортбайків, від туристичних моделей до ендуро — ми зібрали все, що потрібно справжнім райдерам. Якісна техніка, екіпірування, аксесуари та обслуговування — GearCore об’єднує потужність, стиль і дух дороги.aleks""",
+        "gearcore@gmail.com",
+    )
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # https://cookiecutter-django.readthedocs.io/en/latest/settings.html#other-environment-settings

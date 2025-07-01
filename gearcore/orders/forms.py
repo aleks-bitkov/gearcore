@@ -1,5 +1,6 @@
 from django import forms
 
+
 class CreateOrderForm(forms.Form):
     first_name = forms.CharField()
     last_name = forms.CharField()
@@ -10,17 +11,16 @@ class CreateOrderForm(forms.Form):
         widget=forms.RadioSelect(),
         choices=[
             ("0", False),
-            ("1", True)
+            ("1", True),
         ],
-        initial="0"
+        initial="0",
     )
 
     payment_on_get = forms.ChoiceField(
         widget=forms.RadioSelect(),
         choices=[
             ("0", False),
-            ("1", True)
+            ("1", True),
         ],
-        initial="0"
+        initial="0",
     )
-

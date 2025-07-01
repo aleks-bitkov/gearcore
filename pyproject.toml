@@ -54,7 +54,8 @@ indent_size = 2
 indent_size = 2
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py311"
+line-length = 120
 # Exclude a variety of commonly ignored directories.
 extend-exclude = [
     "*/migrations/*.py",
@@ -120,6 +121,7 @@ select = [
 ]
 ignore = [
   "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+  "RUF001",  # Оскільки вважає, що мають бути латинські літери змаість українських
   "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
   "SIM102", # sometimes it's better to nest
   "UP038", # Checks for uses of isinstance/issubclass that take a tuple

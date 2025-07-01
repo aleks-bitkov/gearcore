@@ -4,11 +4,12 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.utils.translation import gettext_lazy as _
 
+from gearcore.carts.admin import CartTabAdmin
+from gearcore.orders.admin import OrderTabAdmin
+
 from .forms import UserAdminChangeForm
 from .forms import UserAdminCreationForm
 from .models import User
-from ..carts.admin import CartTabAdmin
-from ..orders.admin import OrderTabAdmin
 
 if settings.DJANGO_ADMIN_FORCE_ALLAUTH:
     # Force the `admin` sign in process to go through the `django-allauth` workflow:
@@ -23,7 +24,16 @@ class UserAdmin(auth_admin.UserAdmin):
     add_form = UserAdminCreationForm
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal info"), {"fields": (("last_name", "first_name", "patronymic"), "phone_number", "image"),}),
+        (
+            _("Personal info"),
+            {
+                "fields": (
+                    ("last_name", "first_name", "patronymic"),
+                    "phone_number",
+                    "image",
+                ),
+            },
+        ),
         (
             _("Permissions"),
             {
@@ -51,5 +61,4 @@ class UserAdmin(auth_admin.UserAdmin):
         ),
     )
 
-    inlines = (CartTabAdmin, OrderTabAdmin,)
-
+    inlines = (CartTabAdmin, OrderTabAdmin)

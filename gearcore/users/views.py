@@ -1,47 +1,51 @@
-from django.core.cache import cache
+from allauth.account.views import LoginView as AllauthLoginView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import QuerySet, Prefetch
+from django.db.models import Prefetch
+from django.db.models import QuerySet
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, TemplateView
 from django.views.generic import RedirectView
+from django.views.generic import TemplateView
 from django.views.generic import UpdateView
-
-from allauth.account.views import LoginView as AllauthLoginView
 from rest_framework.reverse import reverse_lazy
 
 from gearcore.carts.models import Cart
 from gearcore.common.mixins import CacheMixin
-from gearcore.orders.models import Order, OrderItem
-from gearcore.users.models import User
-
+from gearcore.orders.models import Order
+from gearcore.orders.models import OrderItem
 from gearcore.users.forms import UserProfileForm
+from gearcore.users.models import User
 
 
 class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
-    template_name = 'users/user_detail.html'
+    template_name = "users/user_detail.html"
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy('users:detail')
+    success_url = reverse_lazy("users:detail")
 
     def get_object(self, queryset=None):
         assert self.request.user.is_authenticated  # type guard
         return self.request.user
 
     def form_valid(self, form):
-        messages.success(self.request, _('Дані профілю успішно оновлено'))
+        messages.success(self.request, _("Дані профілю успішно оновлено"))
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         orders = Order.objects.filter(user=self.request.user).prefetch_related(
-            Prefetch("orderitem_set", queryset=OrderItem.objects.select_related("product")))
+            Prefetch(
+                "orderitem_set", queryset=OrderItem.objects.select_related("product"),
+            ),
+        )
 
-        context['orders'] = self.set_get_cache(orders, f"user_{self.request.user.id}_orders", 60)
+        context["orders"] = self.set_get_cache(
+            orders, f"user_{self.request.user.id}_orders", 60,
+        )
         return context
 
 
@@ -81,31 +85,37 @@ def user_cart(request):
 
 def user_orders(request):
     orders = Order.objects.filter(user=request.user).prefetch_related(
-        Prefetch("orderitem_set",
-                 queryset=OrderItem.objects.select_related("product").prefetch_related('product__images')))
+        Prefetch(
+            "orderitem_set",
+            queryset=OrderItem.objects.select_related("product").prefetch_related(
+                "product__images",
+            ),
+        ),
+    )
 
     context = {
         "orders": orders,
     }
 
-    return render(request, 'users/user_order.html', context)
+    return render(request, "users/user_order.html", context)
+
 
 class UserWishlistView(LoginRequiredMixin, TemplateView):
-    template_name = 'users/user_wishlist.html'
+    template_name = "users/user_wishlist.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+        return super().get_context_data(**kwargs)
+
 
 user_wishlist_view = UserWishlistView.as_view()
 
 
 class AccountLoginView(AllauthLoginView):
     def get_success_url(self):
-        redirect_page = self.request.POST.get('next', None)
-        if redirect_page and redirect_page != reverse('account_logout'):
+        redirect_page = self.request.POST.get("next", None)
+        if redirect_page and redirect_page != reverse("account_logout"):
             return redirect_page
-        return reverse_lazy('users:redirect')
+        return reverse_lazy("users:redirect")
 
     def form_valid(self, form):
         session_key = self.request.session.session_key

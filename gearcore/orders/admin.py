@@ -1,23 +1,27 @@
 from django.contrib import admin
 
-from gearcore.orders.models import Order, OrderItem
+from gearcore.orders.models import Order
+from gearcore.orders.models import OrderItem
+
 
 class OrderItemTabAdmin(admin.TabularInline):
     model = OrderItem
-    fields = ('product', 'name', 'price', 'quantity')
-    search_fields = ('name', 'product')
+    fields = ("product", "name", "price", "quantity")
+    search_fields = ("name", "product")
     extra = 0
+
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ("order", "product", "name", "price", "quantity")
     search_fields = ("created_timestamp", "product", "price")
 
+
 class OrderTabAdmin(admin.TabularInline):
     model = Order
-    fields = ('requires_delivery', 'status', 'payment_on_get')
-    search_fields = ('status', 'created_timestamp')
-    readonly_fields = ('created_timestamp',)
+    fields = ("requires_delivery", "status", "payment_on_get")
+    search_fields = ("status", "created_timestamp")
+    readonly_fields = ("created_timestamp",)
     extra = 0
 
 
@@ -30,4 +34,3 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ("created_timestamp",)
 
     inlines = (OrderItemTabAdmin,)
-

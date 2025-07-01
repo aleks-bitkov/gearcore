@@ -5,7 +5,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
-from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
@@ -24,13 +23,13 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("users/", include("gearcore.users.urls", namespace="users")),
-    path('accounts/login/', AccountLoginView.as_view(), name='account_login'),
+    path("accounts/login/", AccountLoginView.as_view(), name="account_login"),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path('catalog/', include('gearcore.goods.urls', namespace='catalog')),
-    path('cart/', include('gearcore.carts.urls', namespace='cart')),
-    path('orders/', include('gearcore.orders.urls', namespace='orders')),
-    path('wishlists/', include('gearcore.wishlist.urls', namespace='wishlist')),
+    path("catalog/", include("gearcore.goods.urls", namespace="catalog")),
+    path("cart/", include("gearcore.carts.urls", namespace="cart")),
+    path("orders/", include("gearcore.orders.urls", namespace="orders")),
+    path("wishlists/", include("gearcore.wishlist.urls", namespace="wishlist")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
