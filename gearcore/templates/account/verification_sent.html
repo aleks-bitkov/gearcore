@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load i18n static %}
+
+{% block css %}
+  {{ block.super }}
+    <link href="{% static 'css/account/minimal.css' %}" rel="stylesheet"/>
+{% endblock css %}
+
+{% block content %}
+  <div class="content-wrapper">
+    <div class="container text-center">
+      <div class="card glass-card text-white shadow-lg p-4 px-md-5">
+        <div class="card-body">
+          <h1 class="card-title display-5 mb-4 fw-bold">
+            {% trans "Підтвердіть Вашу Адресу Електронної Пошти" %}
+          </h1>
+          <p class="lead mb-3">
+            {% trans "Ми відправили вам лист для підтвердження. Слідуйте по посиланню, щоб завершити процес реєстрації." %}
+          </p>
+          <p class="lead">
+            "Якщо ви не знайшли листа в основній скринці, перевірте папку «Спам». Будь ласка, <a class="text-white"
+                                                                                                 href="{% url "main:contact" %}">зв'яжіться
+            з нами</a>, якщо ви не отримаєте листа з підтвердженням протягом кількох хвилин."
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

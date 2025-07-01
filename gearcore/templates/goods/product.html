@@ -14,7 +14,20 @@
 
   <b>{{ product.name }}</b> <br>
   {{ product.description }}
-  <img src="{{ product.main_image.url }} "/>
+  <img src="{{ product.main_image_obj.image.url }} "/>
   {{ product.sell_price }}
   <hr>
+  <br>
+  <br>
+  <br>
+      {% for color in product.available_colors %}
+        <a href="?color={{ color.id }}" style="display:inline-block;background-color: {{ color.hex_code }}; border:1px solid white; width: 30px;height:30px;"></a>
+  {% endfor %}
+
+
+
+  {% for variant in images %}
+
+    <img src="{{ variant.image.url }} "/>
+  {% endfor %}
 {% endblock content %}

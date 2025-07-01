@@ -7,8 +7,8 @@
   <!-- Основна інформація -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <h4 class="mb-3"><i class="bi bi-person"></i> Особиста інформація</h4>
-      <form method="post" enctype="multipart/form-data">
+      <h4 class="mb-3 text-light"><i class="bi bi-person"></i> Особиста інформація</h4>
+      <form method="post" enctype="multipart/form-data" class="text-white">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">оновити дані</button>
@@ -17,11 +17,11 @@
   </div>
 
   <!-- Останні замовлення -->
-  <div class="card shadow-sm">
+  <div class="card shadow-sm text-white">
     <div class="card-body">
       <h5 class="mb-3"><i class="bi bi-bag"></i> Останні замовлення</h5>
       <ul class="list-group list-group-flush">
-{#        {% cache 60 user_orders user.email %}#}
+        {% cache 60 user_orders user.email %}
           {% for order in orders %}
             <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
               #{{ order.id }} — {{ order.created_timestamp|date:"d.m.Y" }}
@@ -30,7 +30,7 @@
           {% empty %}
             <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
           {% endfor %}
-{#        {% endcache %}#}
+        {% endcache %}
       </ul>
     </div>
   </div>

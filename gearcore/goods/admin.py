@@ -1,5 +1,7 @@
 from django.contrib import admin
-from gearcore.goods.models import Categories, Brands, Motorcycle, Engine, Transmission, ChassisAndBrakes, MotorcycleImage
+from django.utils.html import format_html
+from gearcore.goods.models import (Categories, Brands, Motorcycle, Engine, Transmission, VariantImage,
+                                   Color, MotorcycleVariant)
 
 
 @admin.register(Categories)
@@ -14,6 +16,23 @@ class BrandsAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+@admin.register(Color)
+class ColorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'color_preview', 'hex_code')
+    list_filter = ('name',)
+    search_fields = ('name', 'hex_code')
+
+    def color_preview(self, obj):
+        if obj.hex_code:
+            return format_html(
+                '<div style="width: 30px; height: 30px; background-color: {}; border: 1px solid #ccc; border-radius: 3px;"></div>',
+                obj.hex_code
+            )
+        return "-"
+
+    color_preview.short_description = "Превью"
+
+
 class EngineInline(admin.StackedInline):
     model = Engine
     extra = 0
@@ -24,16 +43,28 @@ class TransmissionInline(admin.StackedInline):
     extra = 0
 
 
-class ChassisInline(admin.StackedInline):
-    model = ChassisAndBrakes
-    extra = 0
-
-
-class MotorcycleImageInline(admin.TabularInline):  # Табличний вигляд для зображень
-    model = MotorcycleImage
+class MotorcycleVariantInline(admin.TabularInline):
+    model = MotorcycleVariant
     extra = 1
-    fields = ['image', 'title', 'is_main']
-    readonly_fields = ['created_at']
+    fields = ('color', 'price_modifier', 'quantity', 'is_available')
+
+
+class VariantImageInline(admin.TabularInline):
+    model = VariantImage
+    fields = ('image', 'title', 'is_main', 'sort_order')
+    extra = 1
+
+@admin.register(MotorcycleVariant)
+class MotorcycleVariantAdmin(admin.ModelAdmin):
+    list_display = ('motorcycle', 'color', 'final_price', 'quantity', 'is_available')
+    list_filter = ('is_available', 'color', 'motorcycle__brand', 'motorcycle__category')
+    search_fields = ('motorcycle__name', 'color__name')
+    inlines = [VariantImageInline]
+
+    def final_price(self, obj):
+        return f"{obj.final_price()} грн"
+
+    final_price.short_description = "Фінальна ціна"
 
 
 @admin.register(Motorcycle)
@@ -41,14 +72,7 @@ class MotorcycleAdmin(admin.ModelAdmin):
     inlines = [
         EngineInline,
         TransmissionInline,
-        ChassisInline,
-        MotorcycleImageInline  # Додаємо зображення
+        MotorcycleVariantInline
     ]
-    list_display = ['name', 'brand', 'price', 'is_new', 'image_count']
+    list_display = ['name', 'brand', 'price', 'is_new']
     prepopulated_fields = {"slug": ("name",)}
-
-    def image_count(self, obj):
-        """Показує кількість зображень в списку"""
-        return obj.images.count()
-
-    image_count.short_description = 'Кількість фото'

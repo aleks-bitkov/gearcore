@@ -42,8 +42,31 @@ heartsForm?.forEach(form=>{
         const url = form.getAttribute('action');
         const productSlug = form.dataset.productSlug;
 
-        let result = await makeRequest(url, {"productSlug": productSlug}, csrfToken)
+        const data = {
+            "productSlug": productSlug
+        }
 
-        console.log('result', result)
+        let response = await makeRequest(url, data, csrfToken)
+
+        const heartButton = form.querySelector('.heart-btn');
+        const icon = heartButton?.querySelector('i');
+
+        if (heartButton && icon) {
+            heartButton.classList.toggle('active');
+        }else{
+            console.warn('не знайдено кнопки або іконки додавання до обраних (зміни внесені на сервері)')
+        }
+
+        if (heartButton.classList.contains('active')) {
+                showAlert('Товар додано до улюблених')
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+        } else {
+            showAlert('Товар видалено з улюблених')
+            icon.classList.remove('bi-heart-fill');
+            icon.classList.add('bi-heart');
+        }
+
+        form.setAttribute('action', response.action)
     });
 });

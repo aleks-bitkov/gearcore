@@ -5,10 +5,10 @@ from django.views import View
 
 from gearcore.carts.models import Cart
 from gearcore.goods.models import Motorcycle
-from gearcore.carts.mixins import CardMixin
+from gearcore.carts.mixins import CartMixin
 
 
-class CartAddView(CardMixin, View):
+class CartAddView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         slug = data.get('slug', None)
@@ -34,7 +34,7 @@ class CartAddView(CardMixin, View):
 
 cart_add_view = CartAddView.as_view()
 
-class CartChangeView(CardMixin, View):
+class CartChangeView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         action = data.get('action', None)
@@ -63,7 +63,7 @@ class CartChangeView(CardMixin, View):
 cart_change_view = CartChangeView.as_view()
 
 
-class CardRemoveView(CardMixin, View):
+class CartRemoveView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         cart_id = data.get('id_cart', None)
@@ -79,4 +79,4 @@ class CardRemoveView(CardMixin, View):
             }
         )
 
-cart_remove_view = CardRemoveView.as_view()
+cart_remove_view = CartRemoveView.as_view()

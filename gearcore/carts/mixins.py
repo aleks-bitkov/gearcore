@@ -5,7 +5,7 @@ from gearcore.carts.models import Cart
 from gearcore.carts.utils import get_user_carts
 
 
-class CardMixin:
+class CartMixin:
     def get_cart(self, request, product=None, cart_id=None):
         if request.user.is_authenticated:
             query_kwargs = {"user": request.user}

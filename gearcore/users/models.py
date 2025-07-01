@@ -21,10 +21,10 @@ class User(AbstractUser):
 
     image = FileField(_('Зображення'),upload_to='users', null=True, blank=True)
     username =  CharField(_("username"), max_length=150, unique=True, blank=True, null=True) #  no required
-    first_name = CharField(_("First Name"), max_length=255)
-    last_name = CharField(_("Last name"), max_length=255)
-    patronymic = CharField(_("Patronymic"), blank=True, null=True, max_length=255)
-    phone_number = CharField(_("Phone number"), unique=True, max_length=15)
+    first_name = CharField(_("Ім'я"), max_length=255)
+    last_name = CharField(_("Прізвище"), max_length=255)
+    patronymic = CharField(_("По-батькові"), blank=True, null=True, max_length=255)
+    phone_number = CharField(_("Номер телефону"), unique=True, max_length=20)
     email = EmailField(_("email address"), unique=True)
 
     USERNAME_FIELD = "email"

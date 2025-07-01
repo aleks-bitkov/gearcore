@@ -97,9 +97,16 @@ class CartManager {
         }
     }
 
-    handleResponse(data) {
+    handleResponse(data, action="") {
         if (data.status === 200) {
             this.cartWrapper.innerHTML = data.html;
+
+            if (action === "remove"){
+                showAlert('Товар було виделно з кошику')
+            }else if (action === "add") {
+                showAlert('Товар було додано до кошика')
+            }
+
             this.bindCartEvents();
         } else {
             console.error('Помилка сервера:', data.debug_message);
@@ -127,7 +134,7 @@ class CartManager {
                 id_cart: parseInt(cartId)
             }, csrfToken);
 
-            this.handleResponse(data);
+            this.handleResponse(data,);
         } catch (error) {
             // Error already handled in makeRequest
         }
@@ -138,6 +145,7 @@ class CartManager {
         const url = form.getAttribute('action');
 
         if (!cartId || !url) {
+            showAlert('Сталася помилка при видалені товару з кошика')
             console.error('Відсутні необхідні дані для видалення');
             return;
         }
@@ -147,7 +155,7 @@ class CartManager {
                 id_cart: parseInt(cartId)
             }, csrfToken);
 
-            this.handleResponse(data);
+            this.handleResponse(data, "remove");
         } catch (error) {
             // Error already handled in makeRequest
         }
@@ -167,7 +175,7 @@ class CartManager {
                 slug: productSlug
             }, csrfToken);
 
-            this.handleResponse(data);
+            this.handleResponse(data, "add");
         } catch (error) {
             // Error already handled in makeRequest
         }

@@ -25,6 +25,21 @@ class Brands(models.Model):
     def __str__(self):
         return self.name
 
+
+class Color(models.Model):
+    """Модель для цветов"""
+    name = models.CharField(max_length=100, unique=True, verbose_name='Назва кольору')
+    hex_code = models.CharField(max_length=7, blank=True, null=True, verbose_name='HEX код',
+                                help_text='Наприклад: #FF0000')
+
+    class Meta:
+        verbose_name = "Колір"
+        verbose_name_plural = "Кольори"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 class Motorcycle(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name='Назва')
     slug = models.SlugField(max_length=200, unique=True, blank=True, null=True, verbose_name='URL')
@@ -41,6 +56,7 @@ class Motorcycle(models.Model):
 
     category = models.ForeignKey(Categories, on_delete=models.RESTRICT, verbose_name='Категорія')
     brand = models.ForeignKey(Brands, on_delete=models.RESTRICT, verbose_name='Бренд')
+    colors = models.ManyToManyField(Color, through='MotorcycleVariant', verbose_name='Доступні кольори')
 
     def sell_price(self):
         if self.discount:
@@ -48,8 +64,22 @@ class Motorcycle(models.Model):
         return self.price
 
     @property
+    def default_variant(self):
+        """Возвращает вариант по умолчанию (первый доступный)"""
+        return self.variants.filter(is_available=True).first()
+
+    @property
+    def available_colors(self):
+        """Возвращает доступные цвета для мотоцикла"""
+        return self.colors.filter(motorcyclevariant__is_available=True)
+
+    @property
     def main_image_obj(self):
-        return self.images.filter(is_main=True).first()
+        """Возвращает главное изображение варианта по умолчанию"""
+        default_variant = self.default_variant
+        if default_variant:
+            return default_variant.images.filter(is_main=True).first()
+        return None
 
     def save(self, *args, **kwargs):
         if not self.description:
@@ -62,7 +92,7 @@ class Motorcycle(models.Model):
 
     class Meta:
         indexes = [
-            models.Index(fields=['category', 'brand']),  # Композитний індекс
+            models.Index(fields=['category', 'brand']),
         ]
         verbose_name = "Мотоцикл"
         verbose_name_plural = "Мотоцикли"
@@ -146,13 +176,7 @@ class Transmission(models.Model):
         return f"Трансмісія {self.motorcycle}"
 
 
-class ChassisAndBrakes(models.Model):
-    """Ходова частина і гальма"""
-    BRAKE_TYPE_CHOICES = [
-        ('дисковий', 'Дисковий'),
-        ('барабанний', 'Барабанний'),
-    ]
-
+class SuspensionSystem(models.Model):
     SUSPENSION_TYPE_CHOICES = [
         ('телескопічна вилка', 'Телескопічна вилка'),
         ('маятникова', 'Маятникова'),
@@ -161,15 +185,6 @@ class ChassisAndBrakes(models.Model):
 
     motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='chassis',
                                       verbose_name="Мотоцикл")
-
-    # Гальма
-    front_brake_type = models.CharField("Тип переднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES)
-    rear_brake_type = models.CharField("Тип заднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES)
-    front_brake_description = models.CharField("Опис переднього гальма", max_length=200,
-                                               help_text="Наприклад: дисковий, гідравлічний")
-    rear_brake_description = models.CharField("Опис заднього гальма", max_length=200,
-                                              help_text="Наприклад: дисковий, гідравлічний")
-
     # Підвіска
     front_suspension = models.CharField("Передня підвіска", max_length=50, choices=SUSPENSION_TYPE_CHOICES)
     rear_suspension = models.CharField("Задня підвіска", max_length=200,
@@ -182,11 +197,32 @@ class ChassisAndBrakes(models.Model):
     ground_clearance = models.IntegerField("Дорожній просвіт (мм)")
 
     class Meta:
-        verbose_name = "Ходова частина і гальма"
-        verbose_name_plural = "Ходова частина і гальма"
+        verbose_name = "Ходова частина"
+        verbose_name_plural = "Ходові частини"
+
+class BreakSystem(models.Model):
+    BRAKE_TYPE_CHOICES = [
+        ('дисковий', 'Дисковий'),
+        ('барабанний', 'Барабанний'),
+    ]
+
+    motorcycle = models.OneToOneField(Motorcycle, on_delete=models.CASCADE, related_name='brakes',
+                                      verbose_name="Мотоцикл")
+
+    # Гальма
+    front_brake_type = models.CharField("Тип переднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES)
+    rear_brake_type = models.CharField("Тип заднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES)
+    front_brake_description = models.CharField("Опис переднього гальма", max_length=200,
+                                               help_text="Наприклад: дисковий, гідравлічний")
+    rear_brake_description = models.CharField("Опис заднього гальма", max_length=200,
+                                              help_text="Наприклад: дисковий, гідравлічний")
+
+    class Meta:
+        verbose_name = "гальма"
+        verbose_name_plural = "гальма"
 
     def __str__(self):
-        return f"Ходова {self.motorcycle}"
+        return f"Гальма {self.motorcycle}"
 
 
 class PerformanceSpecs(models.Model):
@@ -233,25 +269,62 @@ class AdditionalFeatures(models.Model):
         return f"Додаткові характеристики {self.motorcycle}"
 
 
-# Додаткова модель для зберігання зображень мотоцикла
-class MotorcycleImage(models.Model):
-    """Зображення мотоцикла"""
-    motorcycle = models.ForeignKey(Motorcycle, on_delete=models.CASCADE, related_name='images', verbose_name="Мотоцикл")
-    image = models.ImageField("Зображення", upload_to='motorcycles/')
+class MotorcycleVariant(models.Model):
+    """Вариант мотоцикла (конкретный цвет)"""
+    motorcycle = models.ForeignKey(Motorcycle, on_delete=models.CASCADE, related_name='variants',
+                                   verbose_name='Мотоцикл')
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, verbose_name='Колір')
+
+    # Специфические для варианта поля
+    price_modifier = models.DecimalField(default=0.00, max_digits=10, decimal_places=2,
+                                         verbose_name='Модифікатор ціни',
+                                         help_text='Додаткова вартість за цей колір (може бути від\'ємною)')
+    quantity = models.PositiveIntegerField(default=0, verbose_name='Кількість на складі')
+    is_available = models.BooleanField(default=True, verbose_name='Доступний для замовлення')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def final_price(self):
+        """Получить финальную цену с учетом модификатора цвета и скидки"""
+        base_price = self.motorcycle.price + self.price_modifier
+        if self.motorcycle.discount:
+            return round(base_price - (base_price * self.motorcycle.discount / 100), 3)
+        return base_price
+
+    @property
+    def main_image(self):
+        """Главное изображение этого варианта"""
+        return self.images.filter(is_main=True).first()
+
+    class Meta:
+        unique_together = ('motorcycle', 'color')
+        verbose_name = "Варіант мотоцикла"
+        verbose_name_plural = "Варіанти мотоциклів"
+        ordering = ['motorcycle', 'color']
+
+    def __str__(self):
+        return f"{self.motorcycle.name} - {self.color.name}"
+
+
+class VariantImage(models.Model):
+    """Изображения для конкретного варианта мотоцикла"""
+    variant = models.ForeignKey(MotorcycleVariant, on_delete=models.CASCADE, related_name='images', verbose_name="Варіант")
+    image = models.ImageField("Зображення", upload_to='motorcycle_variants/')
     title = models.CharField("Назва зображення", max_length=200, blank=True)
     is_main = models.BooleanField("Основне зображення", default=False)
+    sort_order = models.PositiveIntegerField(default=0, verbose_name='Порядок сортування')
     created_at = models.DateTimeField("Дата додавання", auto_now_add=True)
 
     class Meta:
-        verbose_name = "Зображення мотоцикла"
-        verbose_name_plural = "Зображення мотоциклів"
-        ordering = ['-is_main', '-created_at']
+        verbose_name = "Зображення варіанту"
+        verbose_name_plural = "Зображення варіантів"
+        ordering = ['sort_order', '-is_main', '-created_at']
 
     def __str__(self):
-        return f"Зображення {self.motorcycle} - {self.title}"
+        return f"Зображення {self.variant} - {self.title}"
 
     def save(self, *args, **kwargs):
-        # Забезпечуємо, що тільки одне зображення може бути основним
         if self.is_main:
-            MotorcycleImage.objects.filter(motorcycle=self.motorcycle, is_main=True).update(is_main=False)
+            VariantImage.objects.filter(variant=self.variant, is_main=True).update(is_main=False)
         super().save(*args, **kwargs)
