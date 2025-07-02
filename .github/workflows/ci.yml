@@ -35,7 +35,6 @@ jobs:
 
   # With no caching at all the entire ci process takes 3m to complete!
   pytest:
-    needs: [linter]
     runs-on: ubuntu-latest
 
     steps:
@@ -43,20 +42,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Create .env file for Django and Postgres service
-        # super security method))
         run: |
           mkdir -p .envs/.local
-          echo "USE_DOCKER=yes" >> .envs/.local/.django
-          echo "IPYTHONDIR=/app/.ipython" >> .envs/.local/.django
-          echo "REDIS_URL=redis://redis:6379/0" >> .envs/.local/.django
-          echo "CELERY_FLOWER_USER=debug" >> .envs/.local/.django
-          echo "CELERY_FLOWER_PASSWORD=debug" >> .envs/.local/.django
+          echo "USE_DOCKER=${{ secrets.USE_DOCKER }}" >> .envs/.local/.django
+          echo "IPYTHONDIR=${{ secrets.IPYTHONDIR }}" >> .envs/.local/.django
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .envs/.local/.django
+          echo "CELERY_FLOWER_USER=${{ secrets.CELERY_FLOWER_USER }}" >> .envs/.local/.django
+          echo "CELERY_FLOWER_PASSWORD=${{ secrets.CELERY_FLOWER_PASSWORD }}" >> .envs/.local/.django
 
-          echo "POSTGRES_USER=debug" >> .envs/.local/.postgres
-          echo "POSTGRES_PASSWORD=debug" >> .envs/.local/.postgres
-          echo "POSTGRES_DB=gearcore" >> .envs/.local/.postgres
-          echo "POSTGRES_PORT=5432" >> .envs/.local/.postgres
-          echo "POSTGRES_HOST=postgres" >> .envs/.local/.postgres
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .envs/.local/.postgres
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .envs/.local/.postgres
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .envs/.local/.postgres
+          echo "POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}" >> .envs/.local/.postgres
+          echo "POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}" >> .envs/.local/.postgres
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
