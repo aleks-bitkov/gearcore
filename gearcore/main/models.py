@@ -15,10 +15,16 @@ class MainPage(models.Model):
 class Slide(models.Model):
     image = models.FileField(upload_to="slides", verbose_name="зображення слайду")
     description = models.TextField(
-        max_length=500, verbose_name="опис до зображення", blank=True, default="",
+        max_length=500,
+        verbose_name="опис до зображення",
+        blank=True,
+        default="",
     )
     alt = models.CharField(
-        max_length=100, verbose_name="що на картинці? ", blank=True, default="",
+        max_length=100,
+        verbose_name="що на картинці? ",
+        blank=True,
+        default="",
     )
     order = models.PositiveSmallIntegerField(default=0, verbose_name="позиція слайду")
     main_page = models.ForeignKey(

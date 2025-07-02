@@ -87,6 +87,3 @@ form?.addEventListener('submit', async function (event) {
     changeBtnActive(event.submitter)
     updateImagesPreview(response.data)
 })
-
-
-

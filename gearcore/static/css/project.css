@@ -190,4 +190,11 @@ dropdown-menu-custom active {
   animation: fadeInSlide 0.4s ease-in-out;
 }
 
+.z-index-1080{
+  z-index: 1080;
+}
 
+.custom-icon{
+  max-width: 15px;
+  max-height: 15px;
+}

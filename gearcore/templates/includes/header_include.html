@@ -5,117 +5,126 @@
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
       <a class="navbar-brand" href="#">GearCore</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+      <button class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Переключить навигацию">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+      <div class="collapse navbar-collapse justify-content-between"
+           id="navbarNav">
         <!-- Центрируем навигацию -->
         <ul class="navbar-nav mx-auto">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{% url "main:index" %}">Головна</a>
+            <a class="nav-link active"
+               aria-current="page"
+               href="{% url "main:index" %}">Головна</a>
           </li>
           {# ===========: [START] Goods navigation :========= #}
           <li class="nav-item dropdown d-flex align-items-center">
-            <a href="{% url 'goods:catalog' %}" class="text-decoration-none color-inherit">Товари</a>
-            <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+            <a href="{% url 'goods:catalog' %}"
+               class="text-decoration-none color-inherit">Товари</a>
+            <button class="nav-link dropdown-toggle"
+                    role="button"
+                    data-bs-toggle="dropdown"
                     aria-expanded="false"></button>
             <ul class="dropdown-menu">
               {% cache 60 catalog_categories %}
-                {% categories_tag as categories %}
-                {% for category, brands in categories.items %}
-                  <li class="nav-item {% if brands %}dropend{% endif %}">
-                    {% if brands %}
-                      <div class="d-flex justify-content-between align-items-center">
-                        <a href="{% url 'goods:catalog' %}?category={{ category.slug }}" class="dropdown-item">
-                          {{ category.name }}
-                        </a>
-                        <button class="dropdown-toggle btn btn-sm border-0 bg-transparent ms-2"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"></button>
-                      </div>
-                      <ul class="dropdown-menu">
-                        {% for brand in brands %}
-                          <li>
-                            <a class="dropdown-item"
-                               href="{% url 'goods:catalog' %}?category={{ category.slug }}&brand={{ brand.slug }}">
-                              {{ brand.name }}
-                            </a>
-                          </li>
-                        {% endfor %}
-                      </ul>
-                    {% else %}
-                      <a href="{% url 'goods:catalog' %}?category={{ category.slug }}" class="dropdown-item">
-                        {{ category.name }}
-                      </a>
-                    {% endif %}
-                  </li>
-                {% endfor %}
-              {% endcache catalog_categories %}
-            </ul>
-          </li>
-          {# ===========: [END] Goods navigation :========= #}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url "main:about" %}">Про нас</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url "main:contact" %}">Зв'язок</a>
-          </li>
-        </ul>
-        <!-- Иконки справа -->
-        <ul class="navbar-nav d-flex flex-row gap-3">
-          <li class="nav-item">
-            <a class="nav-link" href="#" title="Вікно пошуку" data-bs-toggle="modal" data-bs-target="#searchModal">
-              <i class="bi bi-search fs-5"></i>
+              {% categories_tag as categories %}
+              {% for category, brands in categories.items %}
+                <li class="nav-item {% if brands %}dropend{% endif %}">
+                  {% if brands %}
+                    <div class="d-flex justify-content-between align-items-center">
+                      <a href="{% url 'goods:catalog' %}?category={{ category.slug }}"
+                         class="dropdown-item">{{ category.name }}</a>
+                      <button class="dropdown-toggle btn btn-sm border-0 bg-transparent ms-2"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"></button>
+                    </div>
+                    <ul class="dropdown-menu">
+                      {% for brand in brands %}
+                        <li>
+                          <a class="dropdown-item"
+                             href="{% url 'goods:catalog' %}?category={{ category.slug }}&brand={{ brand.slug }}">
+                            {{ brand.name }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <a href="{% url 'goods:catalog' %}?category={{ category.slug }}"
+                       class="dropdown-item">{{ category.name }}</a>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            {% endcache catalog_categories %}
+          </ul>
+        </li>
+        {# ===========: [END] Goods navigation :========= #}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url "main:about" %}">Про нас</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url "main:contact" %}">Зв'язок</a>
+        </li>
+      </ul>
+      <!-- Иконки справа -->
+      <ul class="navbar-nav d-flex flex-row gap-3">
+        <li class="nav-item">
+          <a class="nav-link"
+             href="#"
+             title="Вікно пошуку"
+             data-bs-toggle="modal"
+             data-bs-target="#searchModal">
+            <i class="bi bi-search fs-5"></i>
+          </a>
+        </li>
+        <li class="nav-item nav-item--cart">
+          <button class="nav-link"
+                  aria-label="Кошик"
+                  type="button"
+                  {% if not request.resolver_match.url_name == 'create' %}id="cartToggle"{% endif %}>
+            <i class="bi bi-bag fs-5"></i>
+          </button>
+          <div id="cartWrapper" class="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
+        </li>
+        {% if user.is_authenticated %}
+          {# ============: [START] Профіль авторизованого користувача :============== #}
+          <li class="nav-item dropdown position-relative" id="profileDropdown">
+            <a class="nav-link" href="#" title="Профіль" id="profileToggle">
+              <i class="bi bi-person-circle fs-5"></i>
             </a>
-          </li>
-          <li class="nav-item nav-item--cart">
-            <button class="nav-link" aria-label="Кошик" type="button"
-                    {% if not request.resolver_match.url_name == 'create' %}id="cartToggle"{% endif %}>
-              <i class="bi bi-bag fs-5"></i>
-            </button>
-            <div id="cartWrapper" class="cartWrapper">
-              {% include 'carts/includes/included_cart.html' %}
+            <div class="dropdown-menu-custom" id="profileMenu">
+              {% if user.is_staff %}
+                <a href="{% url "admin:index" %}" target="_blank"><i class="bi bi-gear-wide-connected"></i>Адмін
+                панель</a>
+              {% endif %}
+              <a href="{% url 'users:detail' %}"><i class="bi bi-person"></i> Мій профіль</a>
+              <a href="#"><i class="bi bi-box-seam"></i> Мої замовлення</a>
+              <a href="{% url 'users:wishlist' %}"><i class="bi bi-heart"></i> Обране</a>
+              <a href="#"><i class="bi bi-gear"></i> Налаштування</a>
+              <a href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a>
             </div>
           </li>
-          {% if user.is_authenticated %}
-
-            {# ============: [START] Профіль авторизованого користувача :============== #}
-            <li class="nav-item dropdown position-relative" id="profileDropdown">
-              <a class="nav-link" href="#" title="Профіль" id="profileToggle">
-                <i class="bi bi-person-circle fs-5"></i>
-              </a>
-              <div class="dropdown-menu-custom" id="profileMenu">
-                {% if user.is_staff %}
-                  <a href="{% url "admin:index" %}" target="_blank"><i class="bi bi-gear-wide-connected"></i>Адмін
-                    панель</a>
-                {% endif %}
-                <a href="{% url 'users:detail' %}"><i class="bi bi-person"></i> Мій профіль</a>
-                <a href="#"><i class="bi bi-box-seam"></i> Мої замовлення</a>
-                <a href="{% url 'users:wishlist' %}"><i class="bi bi-heart"></i> Обране</a>
-                <a href="#"><i class="bi bi-gear"></i> Налаштування</a>
-                <a href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a>
-              </div>
-            </li>
-            {# ============: [END] Профіль авторизованого користувача :============== #}
-
-          {% else %}
-
-            {# ============: [START] профіль НЕ авторизованого користувача :============== #}
-            <li class="nav-item dropdown position-relative" id="profileDropdown">
-              <a class="nav-link" href="#" title="Профіль" id="profileToggle">
-                <i class="bi bi-person-circle fs-5"></i>
-              </a>
-              <div class="dropdown-menu-custom" id="profileMenu">
-                <a href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a>
-                <a href="{% url 'account_signup' %}"><i class="bi bi-person-plus"></i> Зареєструватися</a>
-              </div>
-            </li>
-            {# ============: [END] профіль НЕ авторизованого користувача :============== #}
-
-          {% endif %}
-        </ul>
-      </div>
+          {# ============: [END] Профіль авторизованого користувача :============== #}
+        {% else %}
+          {# ============: [START] профіль НЕ авторизованого користувача :============== #}
+          <li class="nav-item dropdown position-relative" id="profileDropdown">
+            <a class="nav-link" href="#" title="Профіль" id="profileToggle">
+              <i class="bi bi-person-circle fs-5"></i>
+            </a>
+            <div class="dropdown-menu-custom" id="profileMenu">
+              <a href="{% url 'account_login' %}"><i class="bi bi-box-arrow-in-right"></i> Увійти</a>
+              <a href="{% url 'account_signup' %}"><i class="bi bi-person-plus"></i> Зареєструватися</a>
+            </div>
+          </li>
+          {# ============: [END] профіль НЕ авторизованого користувача :============== #}
+        {% endif %}
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 </header>

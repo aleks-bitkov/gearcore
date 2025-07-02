@@ -1,63 +1,72 @@
 {% extends 'base.html' %}
+
 {% load static %}
 
 {% block title %}
   {{ title }}
 {% endblock title %}
-
 {% block css %}
   {{ block.super }}
-  <link href="{% static 'css/goods/product.css' %}" rel="stylesheet"/>
+  <link href="{% static 'css/goods/product.css' %}" rel="stylesheet" />
 {% endblock css %}
-
 {% block content %}
   <div class="product-wrapper">
     <!-- Карусель слева -->
     <div class="carousel-wrapper">
-      <div id="motorcycleCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div id="motorcycleCarousel"
+           class="carousel slide"
+           data-bs-ride="carousel">
         <div class="carousel-inner">
           {% for item in images %}
             <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
-              <img src="{{ item.image.url }}"
-                   class="d-block w-100" alt="Мотоцикл 1"/>
+              <img src="{{ item.image.url }}" class="d-block w-100" alt="Мотоцикл 1" />
             </div>
           {% endfor %}
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#motorcycleCarousel" data-bs-slide="prev">
+        <button class="carousel-control-prev"
+                type="button"
+                data-bs-target="#motorcycleCarousel"
+                data-bs-slide="prev">
           <span class="carousel-control-prev-icon"></span>
           <span class="visually-hidden">Назад</span>
         </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#motorcycleCarousel" data-bs-slide="next">
+        <button class="carousel-control-next"
+                type="button"
+                data-bs-target="#motorcycleCarousel"
+                data-bs-slide="next">
           <span class="carousel-control-next-icon"></span>
           <span class="visually-hidden">Вперед</span>
         </button>
       </div>
     </div>
-
     <!-- Описание справа -->
     <div class="description-wrapper">
       <h3>{{ product.name }}</h3>
-      <p><strong>Потужність:</strong> {{ engine.max_power_hp }} к.с.</p>
-      <p><strong>Тип двигуна:</strong> {{ engine.engine_type }} </p>
+      <p>
+        <strong>Потужність:</strong> {{ engine.max_power_hp }} к.с.
+      </p>
+      <p>
+        <strong>Тип двигуна:</strong> {{ engine.engine_type }}
+      </p>
       <p>{{ product.description }}</p>
-
     </div>
   </div>
-
   <!-- Форма выбора цвета под каруселью -->
   <div class="form-wrapper">
     <div class="color-options mb-3">
-      <form action="{% url 'goods:product_color_change' %}" method="post" id="colorForm">
+      <form action="{% url 'goods:product_color_change' %}"
+            method="post"
+            id="colorForm">
         {% csrf_token %}
         {% for variant in variants %}
-          <button class="color-btn {% if forloop.counter0 == 0 %}active{% endif %}" data-variant-id="{{ variant.id }}" style="background-color: {{ variant.color.hex_code }}"></button>
+          <button class="color-btn {% if forloop.counter0 == 0 %}active{% endif %}"
+                  data-variant-id="{{ variant.id }}"
+                  style="background-color: {{ variant.color.hex_code }}"></button>
         {% endfor %}
       </form>
     </div>
-
   </div>
 {% endblock content %}
-
 {% block javascript %}
   {{ block.super }}
   <script defer src="{% static 'js/goods/product.js' %}"></script>

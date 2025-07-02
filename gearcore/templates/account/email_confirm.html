@@ -1,59 +1,50 @@
 {% extends 'base.html' %}
+
 {% load static i18n %}
 {% load account %}
 {% load allauth %}
 
 {% block title %}
-    Підтвердження пошти | GearCore
+  Підтвердження пошти | GearCore
 {% endblock title %}
-
 {% block css %}
-    {{ block.super }}
-    <link href="{% static 'css/account/minimal.css' %}" rel="stylesheet"/>
+  {{ block.super }}
+  <link href="{% static 'css/account/minimal.css' %}" rel="stylesheet" />
 {% endblock css %}
-
 {% block content %}
-
-
-    <div class="content-wrapper">
-        <div class="container text-center">
-            <div class="card glass-card text-white shadow-lg p-4 px-md-5">
-                <div class="card-body">
-                    <h1 class="display-5 fw-bold mb-4">{% trans "Підтвердження електронної пошти" %}</h1>
-
-                    {% if confirmation %}
-                        {% user_display confirmation.email_address.user as user_display %}
-                        {% if can_confirm %}
-                            <p class="lead mb-4">
-                                {% blocktrans with confirmation.email_address.email as email %}
-                                    Будь ласка, підтвердьте, що <a href="mailto:{{ email }}"
-                                                                   class="link-light text-decoration-underline">{{ email }}</a>
+  <div class="content-wrapper">
+    <div class="container text-center">
+      <div class="card glass-card text-white shadow-lg p-4 px-md-5">
+        <div class="card-body">
+          <h1 class="display-5 fw-bold mb-4">{% trans "Підтвердження електронної пошти" %}</h1>
+          {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            {% if can_confirm %}
+              <p class="lead mb-4">
+                {% blocktrans with confirmation.email_address.email as email %}
+                                    Будь ласка, підтвердьте, що <a href="mailto:{{ email }}" class="link-light text-decoration-underline">{{ email }}</a>
                                     належить користувачу {{ user_display }}.
                                 {% endblocktrans %}
-                            </p>
-
-                            {% url 'account_confirm_email' confirmation.key as action_url %}
-                            <form method="post" action="{{ action_url }}">
-                                {% csrf_token %}
-                                {{ redirect_field }}
-                                <button type="submit" class="btn btn-outline-light px-4 py-2">
-                                    {% trans "Підтвердити" %}
-                                </button>
-                            </form>
-
-                        {% else %}
-                            <p class="lead">{% trans "Ця електронна адреса вже підтверджена іншим обліковим записом." %}</p>
-                        {% endif %}
-                    {% else %}
-                        {% url 'account_email' as email_url %}
-                        <p class="lead">
-                            {% blocktrans %}Це посилання для підтвердження недійсне або вже використане. Будь ласка,
+              </p>
+              {% url 'account_confirm_email' confirmation.key as action_url %}
+              <form method="post" action="{{ action_url }}">
+                {% csrf_token %}
+                {{ redirect_field }}
+                <button type="submit" class="btn btn-outline-light px-4 py-2">{% trans "Підтвердити" %}</button>
+              </form>
+            {% else %}
+              <p class="lead">{% trans "Ця електронна адреса вже підтверджена іншим обліковим записом." %}</p>
+            {% endif %}
+          {% else %}
+            {% url 'account_email' as email_url %}
+            <p class="lead">
+              {% blocktrans %}Це посилання для підтвердження недійсне або вже використане. Будь ласка,
                                 <a href="{{ email_url }}" class="link-light text-decoration-underline">надішліть новий
                                     запит</a>.{% endblocktrans %}
-                        </p>
-                    {% endif %}
-                </div>
-            </div>
+            </p>
+          {% endif %}
         </div>
+      </div>
     </div>
+  </div>
 {% endblock content %}

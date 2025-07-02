@@ -104,5 +104,11 @@ input::placeholder{
   color: #fff; /* для текста */
 }
 
+.bg-color-custom{
+  background-color: #db4437;
+}
 
-
+.custom-bg-block{
+  background-color: rgba(30, 30, 30, 0.85);
+  border-radius: 10px;
+}

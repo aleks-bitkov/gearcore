@@ -10,6 +10,7 @@ def user_wishlist_ids(context):
     user = context.get("request").user
     return set(
         WishlistItem.objects.filter(wishlist__user=user).values_list(
-            "product_id", flat=True,
+            "product_id",
+            flat=True,
         ),
     )

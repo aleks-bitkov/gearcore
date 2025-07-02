@@ -1,77 +1,78 @@
 {% extends 'base.html' %}
+
 {% load static %}
 
 {% block title %}
   Вхід | GearCore
 {% endblock title %}
-
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="{% static 'css/account/base.css' %}" rel="stylesheet"/>
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="{% static 'css/account/base.css' %}" rel="stylesheet" />
 {% endblock css %}
-
 {% block content %}
   <div class="container d-flex justify-content-center align-items-center h-100">
     <div class="base-container p-4 p-md-5 col-md-8 col-lg-6 col-xl-5">
       <div class="text-center mb-4">
-        <h1 class="logo">
-          GearCore
-        </h1>
+        <h1 class="logo">GearCore</h1>
         <p class="text-info">Увійдіть у свій акаунт</p>
       </div>
-
       <form action="{% url 'account_login' %}" method="post">
         {% csrf_token %}
         <div class="mb-3">
           <label for="base" class="form-label text-white visually-hidden">Email</label>
           <div class="input-group text-white">
             <span class="input-group-text"><i class="fas fa-user"></i></span>
-            <input type="email" id="base" name="login" class="form-control" placeholder="Email" required>
+            <input type="email"
+                   id="base"
+                   name="login"
+                   class="form-control"
+                   placeholder="Email"
+                   required />
           </div>
         </div>
-
         <div class="mb-4">
           <label for="password" class="form-label visually-hidden">Пароль</label>
           <div class="input-group">
             <span class="input-group-text"><i class="fas fa-lock"></i></span>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Пароль" required>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Пароль"
+                   required />
           </div>
         </div>
-
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
-            <label class="form-check-label text-light" for="rememberMe">
-              Запам'ятати мене
-            </label>
+            <input class="form-check-input"
+                   type="checkbox"
+                   id="rememberMe"
+                   name="remember" />
+            <label class="form-check-label text-light" for="rememberMe">Запам'ятати мене</label>
           </div>
           <a href="#" class="link-secondary">Забули пароль?</a>
         </div>
-
-        <button type="submit" class="btn btn-base btn-block w-100 py-2 mb-3">
-          УВІЙТИ
-        </button>
-
+        <button type="submit" class="btn btn-base btn-block w-100 py-2 mb-3">УВІЙТИ</button>
         <div class="divider my-4"></div>
-
         <div class="text-center mb-3">
           <p class="text-light">увійти через</p>
           <div class="d-flex justify-content-center gap-3">
-            <a href="#" class="btn social-btn" style="background-color: #db4437;">
+            <a href="#" class="btn social-btn bg-color-custom">
               <i class="fab fa-google"></i>
             </a>
           </div>
         </div>
-
         <div class="text-center">
-          <p class="text-light">Немає акаунту? <a href="{% url 'account_signup' %}" class="link-secondary">Зареєструватися</a></p>
+          <p class="text-light">
+            Немає акаунту? <a href="{% url 'account_signup' %}" class="link-secondary">Зареєструватися</a>
+          </p>
         </div>
       </form>
     </div>
   </div>
 {% endblock content %}
-
 {% block javascript %}
   {{ block.super }}
   <script src="{% static 'js/account/base.js' %}"></script>

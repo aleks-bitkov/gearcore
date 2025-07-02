@@ -24,19 +24,24 @@ class Order(models.Model):
         verbose_name="Користувач",
     )
     created_timestamp = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата створення замовлення",
+        auto_now_add=True,
+        verbose_name="Дата створення замовлення",
     )
     phone_number = models.CharField(max_length=15, verbose_name="Номер телефону")
     requires_delivery = models.BooleanField(
-        default=False, verbose_name="Потрібна доставка",
+        default=False,
+        verbose_name="Потрібна доставка",
     )
     delivery_address = models.TextField(verbose_name="Адреса доставки")
     payment_on_get = models.BooleanField(
-        default=False, verbose_name="Оплата при отримані",
+        default=False,
+        verbose_name="Оплата при отримані",
     )
     is_paid = models.BooleanField(default=False, verbose_name="Оплачено")
     status = models.CharField(
-        max_length=50, default="В обробці", verbose_name="Статус замовлення",
+        max_length=50,
+        default="В обробці",
+        verbose_name="Статус замовлення",
     )
 
     class Meta:
@@ -50,7 +55,9 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
-        to=Order, on_delete=models.CASCADE, verbose_name="Замовлення",
+        to=Order,
+        on_delete=models.CASCADE,
+        verbose_name="Замовлення",
     )
     product = models.ForeignKey(
         to=Motorcycle,
@@ -64,7 +71,8 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Ціна")
     quantity = models.PositiveIntegerField(default=0, verbose_name="Кількість")
     create_timestamp = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата продажі",
+        auto_now_add=True,
+        verbose_name="Дата продажі",
     )
 
     objects = OrderItemQueryset.as_manager()
@@ -79,5 +87,3 @@ class OrderItem(models.Model):
 
     def products_price(self):
         return round(self.price * self.quantity, 2)
-
-

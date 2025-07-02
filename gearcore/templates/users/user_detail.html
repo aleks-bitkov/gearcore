@@ -1,13 +1,15 @@
 {% extends 'users/base.html' %}
+
 {% load static %}
 {% load cache %}
 
 {% block content %}
-
   <!-- Основна інформація -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <h4 class="mb-3 text-light"><i class="bi bi-person"></i> Особиста інформація</h4>
+      <h4 class="mb-3 text-light">
+        <i class="bi bi-person"></i> Особиста інформація
+      </h4>
       <form method="post" enctype="multipart/form-data" class="text-white">
         {% csrf_token %}
         {{ form.as_p }}
@@ -15,119 +17,24 @@
       </form>
     </div>
   </div>
-
   <!-- Останні замовлення -->
   <div class="card shadow-sm text-white">
     <div class="card-body">
-      <h5 class="mb-3"><i class="bi bi-bag"></i> Останні замовлення</h5>
+      <h5 class="mb-3">
+        <i class="bi bi-bag"></i> Останні замовлення
+      </h5>
       <ul class="list-group list-group-flush">
         {% cache 60 user_orders user.email %}
-          {% for order in orders %}
-            <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
-              #{{ order.id }} — {{ order.created_timestamp|date:"d.m.Y" }}
-              <span class="badge bg-warning text-dark">{{ order.status }}</span>
-            </li>
-          {% empty %}
-            <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
-          {% endfor %}
-        {% endcache %}
-      </ul>
-    </div>
+        {% for order in orders %}
+          <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between">
+            #{{ order.id }} — {{ order.created_timestamp|date:"d.m.Y" }}
+            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item bg-dark text-light border-secondary">Немає замовлень.</li>
+        {% endfor %}
+      {% endcache %}
+    </ul>
   </div>
-  </div>
-  </div>
-
-{% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{#{% extends "base.html" %}#}
-{##}
-{#{% load static %}#}
-{##}
-{#{% block title %}#}
-{#  Користувач: {{ user.email }}#}
-{#{% endblock title %}#}
-{##}
-{#{% block content %}#}
-{#<div class="row">#}
-{#  <!-- Сайдбар -->#}
-{#  <div class="col-lg-3 mb-4">#}
-{#    <!-- Блок з аватаром і емейлом -->#}
-{#    <div class="card bg-dark border-0 text-center mb-4 shadow-sm p-3">#}
-{#      <div class="mx-auto mb-2" style="width: 80px; height: 80px;">#}
-{#        <img src="{% static 'images/default-avatar.png' %}" alt="Аватар користувача"#}
-{#             class="rounded-circle img-fluid border border-secondary" style="object-fit: cover;">#}
-{#      </div>#}
-{#      <h6 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h6>#}
-{#      <small class="text-muted">{{ user.email }}</small>#}
-{#    </div>#}
-{##}
-{#    <!-- Меню навігації -->#}
-{#    <div class="list-group shadow-sm">#}
-{#      <a href="#" class="list-group-item list-group-item-action bg-dark text-light active">#}
-{#        <i class="bi bi-person"></i> Мій профіль#}
-{#      </a>#}
-{#      <a href="#" class="list-group-item list-group-item-action bg-dark text-light">#}
-{#        <i class="bi bi-box-seam"></i> Замовлення#}
-{#      </a>#}
-{#      <a href="#" class="list-group-item list-group-item-action bg-dark text-light">#}
-{#        <i class="bi bi-heart"></i> Обране#}
-{#      </a>#}
-{#      <a href="#" class="list-group-item list-group-item-action bg-dark text-light">#}
-{#        <i class="bi bi-gear"></i> Налаштування#}
-{#      </a>#}
-{#      <a href="{% url 'account_logout' %}" class="list-group-item list-group-item-action bg-dark text-danger">#}
-{#        <i class="bi bi-box-arrow-right"></i> Вийти#}
-{#      </a>#}
-{#    </div>#}
-{#  </div>#}
-{##}
-{#  <!-- Основной блок -->#}
-{#  <div class="col-lg-9">#}
-{#    <div class="card bg-dark border-0 shadow-sm">#}
-{#      <div class="card-body">#}
-{#        <h4 class="card-title mb-4"><i class="bi bi-person-circle me-2"></i>Профіль користувача</h4>#}
-{#        <p><strong>Ім’я:</strong> {{ user.first_name }}</p>#}
-{#        <p><strong>Прізвище:</strong> {{ user.last_name }}</p>#}
-{#        <p><strong>Email:</strong> {{ user.email }}</p>#}
-{#        <p><strong>Дата приєднання:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>#}
-{#        <a href="{% url 'users:update' %}" class="btn btn-outline-light mt-3">#}
-{#          <i class="bi bi-pencil"></i> Редагувати профіль#}
-{#        </a>#}
-{#      </div>#}
-{#    </div>#}
-{##}
-{#    <!-- Історія замовлень -->#}
-{#    <div class="card bg-dark border-0 shadow-sm mt-4">#}
-{#      <div class="card-body">#}
-{#        <h5 class="card-title"><i class="bi bi-receipt me-2"></i>Останні замовлення</h5>#}
-{#        <ul class="list-group list-group-flush">#}
-{#          {% for order in recent_orders %}#}
-{#          <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center">#}
-{#            <span>Замовлення #{{ order.id }} — {{ order.created_at|date:"d.m.Y" }}</span>#}
-{#            <span class="badge bg-secondary">{{ order.get_status_display }}</span>#}
-{#          </li>#}
-{#          {% empty %}#}
-{#          <li class="list-group-item bg-dark text-light border-secondary">#}
-{#            У вас ще немає замовлень.#}
-{#          </li>#}
-{#          {% endfor %}#}
-{#        </ul>#}
-{#      </div>#}
-{#    </div>#}
-{#  </div>#}
-{#</div>#}
-{#{% endblock %}#}
-{##}
+</div>
+{% endblock content %}

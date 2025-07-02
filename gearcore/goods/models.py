@@ -5,7 +5,11 @@ from django.urls import reverse
 class Category(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name="Назва")
     slug = models.SlugField(
-        max_length=200, unique=True, blank=True, null=True, verbose_name="URL",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="URL",
     )
 
     class Meta:
@@ -20,7 +24,11 @@ class Category(models.Model):
 class Brand(models.Model):
     name = models.CharField(max_length=50, unique=True, verbose_name="Назва бренду")
     slug = models.SlugField(
-        max_length=70, unique=True, blank=True, null=True, verbose_name="URL",
+        max_length=70,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="URL",
     )
 
     class Meta:
@@ -54,7 +62,11 @@ class Color(models.Model):
 class Motorcycle(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name="Назва")
     slug = models.SlugField(
-        max_length=200, unique=True, blank=True, null=True, verbose_name="URL",
+        max_length=200,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name="URL",
     )
     description = models.TextField(verbose_name="Опис", blank=True)
 
@@ -62,23 +74,35 @@ class Motorcycle(models.Model):
     updated_at = models.DateTimeField("Дата оновлення", auto_now=True)
 
     price = models.DecimalField(
-        default=0.00, max_digits=10, decimal_places=2, verbose_name="Ціна",
+        default=0.00,
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Ціна",
     )
     discount = models.DecimalField(
-        default=0.00, max_digits=10, decimal_places=2, verbose_name="Знижка у %",
+        default=0.00,
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Знижка у %",
     )
     quantity = models.PositiveIntegerField(default=0, verbose_name="Кількість")
 
     is_new = models.BooleanField(
-        "Товар новий?", default=False, help_text="Позначити як новий товар",
+        "Товар новий?",
+        default=False,
+        help_text="Позначити як новий товар",
     )
 
     category = models.ForeignKey(
-        Category, on_delete=models.RESTRICT, verbose_name="Категорія",
+        Category,
+        on_delete=models.RESTRICT,
+        verbose_name="Категорія",
     )
     brand = models.ForeignKey(Brand, on_delete=models.RESTRICT, verbose_name="Бренд")
     colors = models.ManyToManyField(
-        Color, through="MotorcycleVariant", verbose_name="Доступні кольори",
+        Color,
+        through="MotorcycleVariant",
+        verbose_name="Доступні кольори",
     )
 
     class Meta:
@@ -94,9 +118,7 @@ class Motorcycle(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.description:
-            self.description = (
-                f'для "{self.name}" ще не було додано опису, вибачте за незручності'
-            )
+            self.description = f'для "{self.name}" ще не було додано опису, вибачте за незручності'
 
         super().save(*args, **kwargs)
 
@@ -125,7 +147,6 @@ class Motorcycle(models.Model):
         if default_variant:
             return default_variant.images.filter(is_main=True).first()
         return None
-
 
 
 class Engine(models.Model):
@@ -166,7 +187,9 @@ class Engine(models.Model):
     torque_rpm = models.IntegerField("Обороти при макс. моменті (об./хв.)")
     displacement = models.IntegerField("Об'єм двигуна (см³)")
     cooling = models.CharField(
-        "Охолодження двигуна", max_length=20, choices=COOLING_CHOICES,
+        "Охолодження двигуна",
+        max_length=20,
+        choices=COOLING_CHOICES,
     )
     start_type = models.CharField(
         "Тип запуску",
@@ -175,7 +198,9 @@ class Engine(models.Model):
     )
     balance_shaft = models.BooleanField("Балансувальний вал", default=False)
     fuel_system = models.CharField(
-        "Система упорскування палива", max_length=20, choices=FUEL_SYSTEM_CHOICES,
+        "Система упорскування палива",
+        max_length=20,
+        choices=FUEL_SYSTEM_CHOICES,
     )
 
     class Meta:
@@ -209,7 +234,9 @@ class Transmission(models.Model):
     )
 
     gearbox_type = models.CharField(
-        "Тип КПП", max_length=20, choices=GEARBOX_TYPE_CHOICES,
+        "Тип КПП",
+        max_length=20,
+        choices=GEARBOX_TYPE_CHOICES,
     )
     gears_count = models.IntegerField("Кількість передач")
     gearbox_description = models.CharField(
@@ -218,7 +245,9 @@ class Transmission(models.Model):
         help_text="Наприклад: послідовна (схема 1-0-2-3-4-5)",
     )
     drive_type = models.CharField(
-        "Тип приводу", max_length=20, choices=DRIVE_TYPE_CHOICES,
+        "Тип приводу",
+        max_length=20,
+        choices=DRIVE_TYPE_CHOICES,
     )
     clutch_description = models.CharField(
         "Зчеплення",
@@ -249,7 +278,9 @@ class SuspensionSystem(models.Model):
     )
     # Підвіска
     front_suspension = models.CharField(
-        "Передня підвіска", max_length=50, choices=SUSPENSION_TYPE_CHOICES,
+        "Передня підвіска",
+        max_length=50,
+        choices=SUSPENSION_TYPE_CHOICES,
     )
     rear_suspension = models.CharField(
         "Задня підвіска",
@@ -259,10 +290,14 @@ class SuspensionSystem(models.Model):
 
     # Колеса
     front_wheel = models.CharField(
-        "Переднє колесо", max_length=50, help_text="Розмір у форматі 90/90-17 R",
+        "Переднє колесо",
+        max_length=50,
+        help_text="Розмір у форматі 90/90-17 R",
     )
     rear_wheel = models.CharField(
-        "Заднє колесо", max_length=50, help_text="Розмір у форматі 120/80-17 R",
+        "Заднє колесо",
+        max_length=50,
+        help_text="Розмір у форматі 120/80-17 R",
     )
     wheelbase = models.IntegerField("Колісна база (мм)")
     ground_clearance = models.IntegerField("Дорожній просвіт (мм)")
@@ -273,6 +308,7 @@ class SuspensionSystem(models.Model):
 
     def __str__(self):
         return f"Ходові частини мотоциклу {self.motorcycle}"
+
 
 class BreakSystem(models.Model):
     BRAKE_TYPE_CHOICES = [
@@ -289,10 +325,14 @@ class BreakSystem(models.Model):
 
     # Гальма
     front_brake_type = models.CharField(
-        "Тип переднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES,
+        "Тип переднього гальма",
+        max_length=20,
+        choices=BRAKE_TYPE_CHOICES,
     )
     rear_brake_type = models.CharField(
-        "Тип заднього гальма", max_length=20, choices=BRAKE_TYPE_CHOICES,
+        "Тип заднього гальма",
+        max_length=20,
+        choices=BRAKE_TYPE_CHOICES,
     )
     front_brake_description = models.CharField(
         "Опис переднього гальма",
@@ -354,10 +394,12 @@ class AdditionalFeatures(models.Model):
     )
 
     dashboard_description = models.TextField(
-        "Приладова панель", help_text="Опис приладової панелі та її функцій",
+        "Приладова панель",
+        help_text="Опис приладової панелі та її функцій",
     )
     lighting_description = models.TextField(
-        "Світло", help_text="Опис системи освітлення",
+        "Світло",
+        help_text="Опис системи освітлення",
     )
     lubrication_system = models.CharField(
         "Система змазки",
@@ -365,7 +407,8 @@ class AdditionalFeatures(models.Model):
         help_text="Наприклад: тиском та розбризкуванням, з мокрим картером",
     )
     recommended_oil = models.TextField(
-        "Рекомендована олія", help_text="Рекомендації по моторній оливі",
+        "Рекомендована олія",
+        help_text="Рекомендації по моторній оливі",
     )
 
     class Meta:
@@ -396,10 +439,12 @@ class MotorcycleVariant(models.Model):
         help_text="Додаткова вартість за цей колір (може бути від'ємною)",
     )
     quantity = models.PositiveIntegerField(
-        default=0, verbose_name="Кількість на складі",
+        default=0,
+        verbose_name="Кількість на складі",
     )
     is_available = models.BooleanField(
-        default=True, verbose_name="Доступний для замовлення",
+        default=True,
+        verbose_name="Доступний для замовлення",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -440,7 +485,8 @@ class VariantImage(models.Model):
     title = models.CharField("Назва зображення", max_length=200, blank=True)
     is_main = models.BooleanField("Основне зображення", default=False)
     sort_order = models.PositiveIntegerField(
-        default=0, verbose_name="Порядок сортування",
+        default=0,
+        verbose_name="Порядок сортування",
     )
     created_at = models.DateTimeField("Дата додавання", auto_now_add=True)
 

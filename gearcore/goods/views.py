@@ -7,8 +7,9 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
-from gearcore.goods.models import Brand, Engine
+from gearcore.goods.models import Brand
 from gearcore.goods.models import Category
+from gearcore.goods.models import Engine
 from gearcore.goods.models import Motorcycle
 from gearcore.goods.models import MotorcycleVariant
 from gearcore.goods.models import VariantImage
@@ -20,7 +21,7 @@ class CatalogView(ListView):
     model = Motorcycle
     template_name = "goods/catalog.html"
     context_object_name = "products"
-    paginate_by = 3
+    paginate_by = 1
 
     def __init__(self):
         super().__init__()
@@ -64,6 +65,7 @@ class CatalogView(ListView):
         context["selected_brands"] = self.selected_brands
         return context
 
+
 catalog_view = CatalogView.as_view()
 
 
@@ -79,7 +81,6 @@ class ProductView(DetailView):
         context = super().get_context_data(**kwargs)
         context["title"] = f"{self.object.name} | GearCore"
         motorcycle = self.object
-
 
         selected_variant = motorcycle.default_variant
         context["images"] = VariantImage.objects.filter(variant=selected_variant)
@@ -104,20 +105,21 @@ class ProductColorChangeView(View):
 
         if variant_id < 0:
             return JsonResponse(
-                {"debug_message": "Не отримано ідентифіктор варіанту", "data": None}, status=400,
+                {"debug_message": "Не отримано ідентифіктор варіанту", "data": None},
+                status=400,
             )
 
         try:
             variants = VariantImage.objects.filter(variant=variant_id)
         except VariantImage.DoesNotExist:
             return JsonResponse(
-                {"debug_message": f"не знайдено зображень для варіанту #{variant_id}", "data": None}, status=400,
+                {"debug_message": f"не знайдено зображень для варіанту #{variant_id}", "data": None},
+                status=400,
             )
 
-        images_info = []
-        for variant in variants:
-            images_info.append(variant.image.url)
+        images_info = [variant.image.url for variant in variants]
 
         return JsonResponse({"debug_message": "дані отримані", "data": images_info}, status=200)
+
 
 product_color_change_view = ProductColorChangeView.as_view()

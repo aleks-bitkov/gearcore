@@ -1,20 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <div id="cartWrapper">
-    {% include 'carts/includes/included_cart.html' %}
-  </div>
-
+  <div id="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
   {% if form.errors %}
-    {% for error in form.errors %}
-      {{ error }}
-
-    {% endfor %}
+    {% for error in form.errors %}{{ error }}{% endfor %}
   {% endif %}
-
   <form action="{% url "orders:create" %}" method="post">
     {% csrf_token %}
-   {{form.as_p}}
-  <button type="submit">send</button>
+    {{ form.as_p }}
+    <button type="submit">send</button>
   </form>
 {% endblock content %}

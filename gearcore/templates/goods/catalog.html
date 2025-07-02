@@ -1,58 +1,60 @@
 {% extends "base.html" %}
+
 {% load static %}
 {% load humanize %}
-
 {% load goods_tags %}
-
-{% block css %}
-  {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/goods/card.css' %}">
-{% endblock %}
 
 {% block title %}
   Каталог товарів | GearCore
 {% endblock title %}
-
+{% block css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/goods/card.css' %}" />
+{% endblock css %}
 {% block content %}
-
   <div class="row">
     <!-- Фильтры -->
     <aside class="col-md-3 mb-4">
       <h5 class="mb-3">Фільтри</h5>
       <form method="get"
             action="{% if request.GET.q %}{% url "goods:search" %}{% else %}{% url "goods:catalog" %}{% endif %}">
-        {% if request.GET.q %}
-          <input type="hidden" name="q" value="{{ request.GET.q }}">
-        {% endif %}
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}" />{% endif %}
         <div class="mb-3">
-          <label class="form-label">Категорія</label><br>
+          <label class="form-label">Категорія</label>
+          <br />
           {% for category in categories %}
             <label>
               {{ category.name }}
-              <input name="category" value="{{ category.slug }}" type="checkbox"
-                     {% if category.slug in selected_categories %}checked{% endif %}>
-            </label><br>
+              <input name="category"
+                     value="{{ category.slug }}"
+                     type="checkbox"
+                     {% if category.slug in selected_categories %}checked{% endif %} />
+            </label>
+            <br />
           {% endfor %}
         </div>
         <div class="mb-3">
-          <label class="form-label">Бренд</label><br>
+          <label class="form-label">Бренд</label>
+          <br />
           {% for brand in brands %}
             <label>
               {{ brand }}
-              <input name="brand" value="{{ brand.slug }}" type="checkbox"
+              <input name="brand"
+                     value="{{ brand.slug }}"
+                     type="checkbox"
                      aria-label="Checkbox for following text input"
-                     {% if brand.slug in selected_brands %}checked{% endif %}>
-            </label><br>
+                     {% if brand.slug in selected_brands %}checked{% endif %} />
+            </label>
+            <br />
           {% endfor %}
         </div>
         <div class="mb-3">
           <label for="priceRange" class="form-label">Ціна</label>
-          <input type="range" class="form-range" min="0" max="50000" id="priceRange">
+          <input type="range" class="form-range" min="0" max="50000" id="priceRange" />
         </div>
         <button type="submit" class="btn btn-outline-light w-100">Застосувати</button>
       </form>
     </aside>
-
     <!-- Список товаров -->
     <section class="col-md-9">
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -63,22 +65,20 @@
           <option value="price_desc">Ціна ↓</option>
         </select>
       </div>
-
       <!-- Сетка товаров -->
       <div class="row row-cols-1 row-cols-md-2 g-4">
         {% for product in products %}
           <div class="col position-relative">
             <div class="card h-100 bg-dark text-light border-secondary position-relative">
-              <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1"
-                   style="background: rgba(0, 0, 0, 0.6); border-bottom-left-radius: 0.5rem;">
-                <form action="
-                  {% if product.is_favorite %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
-                      method="post" class="heart-form"
+              <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1 custom-block-right">
+                <form action="{% if product.is_favorite %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
+                      method="post"
+                      class="heart-form"
                       data-product-slug="{{ product.slug }}">
                   {% csrf_token %}
-                  <button
-                    class="btn btn-sm btn-outline-light mb-2 heart-btn {% if product.is_favorite %}active{% endif %}"
-                    title="До улюблених" type="submit">
+                  <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if product.is_favorite %}active{% endif %}"
+                          title="До улюблених"
+                          type="submit">
                     {% if product.is_favorite %}
                       <i class="bi bi-heart-fill"></i>
                     {% else %}
@@ -86,19 +86,20 @@
                     {% endif %}
                   </button>
                 </form>
-
-                <button class="btn btn-sm btn-outline-light mb-2" title="Змінити колір"><i
-                  class="bi bi-palette"></i></button>
-                <button class="btn btn-sm btn-outline-light" title="Порівняти"> {# btn-primary active #}
+                <button class="btn btn-sm btn-outline-light mb-2" title="Змінити колір">
+                  <i class="bi bi-palette"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-light" title="Порівняти">
+                  {# btn-primary active #}
                   <i class="bi bi-arrow-left-right"></i>
                 </button>
               </div>
-
               <a href="{% url 'goods:product' product.slug %}">
-                <img src="{{ product.main_image_obj.image.url }}" class="card-img-top object-fit-cover"
-                     alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                <img src="{{ product.main_image_obj.image.url }}"
+                     class="card-img-top object-fit-cover"
+                     alt="{{ product.name }}"
+                     height="250px" />
               </a>
-
               <div class="card-body d-flex flex-column">
                 <h6 class="card-title">
                   {% autoescape off %}
@@ -109,7 +110,7 @@
                     {% endif %}
                   {% endautoescape %}
                 </h6>
-                <hr>
+                <hr />
                 <p class="card-text small">
                   {% autoescape off %}
                     {% if product.headline %}
@@ -119,22 +120,23 @@
                     {% endif %}
                   {% endautoescape %}
                 </p>
-
                 <div class="mt-auto">
                   <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="fw-bold card-price">{{ product.sell_price|intcomma }} ₴</span>
                     <a href="{% url 'goods:product' product.slug %}"
-                       class="btn btn-sm btn-outline-light card-btn-custom">
-                      Детальніше
-                    </a>
+                       class="btn btn-sm btn-outline-light card-btn-custom">Детальніше</a>
                   </div>
-
                   <!-- Кнопка добавления в корзину -->
                   <div class="d-grid">
-                    <form action="{% url 'cart:add' %}" data-product-slug="{{ product.slug }}" data-product-variant-id="{{ product.default_variant.id }}" method="post"
+                    <form action="{% url 'cart:add' %}"
+                          data-product-slug="{{ product.slug }}"
+                          data-product-variant-id="{{ product.default_variant.id }}"
+                          method="post"
                           class="fromAddCart">
                       {% csrf_token %}
-                      <button class="btn btn-success w-100 card-add-cart" type="submit" title="До кошика">
+                      <button class="btn btn-success w-100 card-add-cart"
+                              type="submit"
+                              title="До кошика">
                         <i class="bi bi-cart-plus me-1"></i> До кошика
                       </button>
                     </form>
@@ -164,15 +166,43 @@
                 <a class="page-link bg-dark text-light border-secondary"
                    href="?page={% change_params page=page_obj.previous_page_number %}"
                    aria-label="Попередня">
-                  <span aria-hidden="true">&laquo;</span>
+                  <span aria-hidden="true">
+                    <svg width="17px"
+                         height="24px"
+                         viewBox="0 0 1024 1024"
+                         class="icon justify-content-center d-flex align-items-center"
+                         version="1.1"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="orange">
+                      <g stroke-width="0">
+                      </g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                      </g>
+                      <g id="SVGRepo_iconCarrier">
+                      <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z" fill="#f0f0f0f" />
+                      </g>
+                    </svg>
+                  </span>
                 </a>
               </li>
             {% else %}
               <li class="page-item disabled">
-                <span class="page-link bg-dark text-light border-secondary" aria-hidden="true">&laquo;</span>
+                <span class="page-link bg-dark text-light border-secondary"
+                      aria-hidden="true">
+                  <svg width="17px" height="24px" viewBox="0 0 1024 1024"
+                    class="icon justify-content-center d-flex align-items-center" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" fill="#f0f0f0"">
+                    <g stroke-width="0">
+                    </g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                    </g>
+                    <g id="SVGRepo_iconCarrier">
+                    <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z" fill="#cccccc" />
+                    </g>
+                  </svg>
+                </span>
               </li>
             {% endif %}
-
             {% for num in page_obj.paginator.page_range %}
               {% if page_obj.number == num %}
                 <li class="page-item active" aria-current="page">
@@ -185,24 +215,54 @@
                 </li>
               {% endif %}
             {% endfor %}
-
             {% if page_obj.has_next %}
               <li class="page-item">
                 <a class="page-link bg-dark text-light border-secondary"
                    href="?page={% change_params page=page_obj.next_page_number %}">
-                  <span aria-hidden="true">&raquo;</span>
+                  <span aria-hidden="true">
+                    <svg width="17px"
+                         height="24px"
+                         viewBox="0 0 1024 1024"
+                         class="icon justify-content-center d-flex align-items-center"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="#ed333b">
+                      <g stroke-width="0">
+                      </g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                      </g>
+                      <g id="SVGRepo_iconCarrier">
+                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="orange" />
+                      </g>
+                    </svg>
+                  </span>
                 </a>
               </li>
             {% else %}
               <li class="page-item disabled">
-                <span class="page-link bg-dark text-light border-secondary" aria-hidden="true">&raquo;</span>
+                <span class="page-link bg-dark text-light border-secondary"
+                      aria-hidden="true">
+                  <span aria-hidden="true">
+                    <svg width="17px"
+                         height="24px"
+                         viewBox="0 0 1024 1024"
+                         class="icon justify-content-center d-flex align-items-center"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="#ed333b">
+                      <g stroke-width="0">
+                      </g>
+                      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
+                      </g>
+                      <g id="SVGRepo_iconCarrier">
+                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="#cccccc" />
+                      </g>
+                    </svg>
+                  </span>
+                </span>
               </li>
             {% endif %}
           </ul>
         </nav>
       {% endif %}
-
     </section>
   </div>
 {% endblock content %}
-

@@ -19,7 +19,11 @@ class User(AbstractUser):
 
     image = FileField(_("Зображення"), upload_to="users", null=True, blank=True)
     username = CharField(
-        _("username"), max_length=150, unique=True, blank=True, null=True,
+        _("username"),
+        max_length=150,
+        unique=True,
+        blank=True,
+        null=True,
     )  #  no required
     first_name = CharField(_("Ім'я"), max_length=255)
     last_name = CharField(_("Прізвище"), max_length=255)

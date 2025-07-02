@@ -5,6 +5,7 @@ import ssl
 from pathlib import Path
 
 import environ
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # gearcore/
@@ -28,7 +29,6 @@ TIME_ZONE = "Europe/Kiev"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "uk"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
-from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ("uk", _("Ukrainian")),
@@ -41,7 +41,6 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 
-USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
 
@@ -245,7 +244,7 @@ ADMINS = [
     (
         """Магазин мотоциклів для тих, хто відчуває свободу на повну. Від круїзерів до спортбайків, від туристичних моделей до ендуро — ми зібрали все, що потрібно справжнім райдерам. Якісна техніка, екіпірування, аксесуари та обслуговування — GearCore об’єднує потужність, стиль і дух дороги.aleks""",
         "gearcore@gmail.com",
-    )
+    ),
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS

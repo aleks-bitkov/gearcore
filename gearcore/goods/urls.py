@@ -1,8 +1,8 @@
 from django.urls import path
 
 from gearcore.goods.views import catalog_view
-from gearcore.goods.views import product_view
 from gearcore.goods.views import product_color_change_view
+from gearcore.goods.views import product_view
 
 app_name = "goods"
 

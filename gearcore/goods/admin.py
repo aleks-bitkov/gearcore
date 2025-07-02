@@ -32,6 +32,9 @@ class ColorAdmin(admin.ModelAdmin):
     list_filter = ("name",)
     search_fields = ("name", "hex_code")
 
+    @admin.display(
+        description="Превью",
+    )
     def color_preview(self, obj):
         if obj.hex_code:
             return format_html(
@@ -40,8 +43,6 @@ class ColorAdmin(admin.ModelAdmin):
                 obj.hex_code,
             )
         return "-"
-
-    color_preview.short_description = "Превью"
 
 
 class EngineInline(admin.StackedInline):
@@ -65,13 +66,16 @@ class VariantImageInline(admin.TabularInline):
     fields = ("image", "title", "is_main", "sort_order")
     extra = 1
 
+
 class AdditionalFeaturesInline(admin.TabularInline):
     model = AdditionalFeatures
     extra = 0
 
+
 class SuspensionSystemInline(admin.TabularInline):
     model = SuspensionSystem
     extra = 0
+
 
 class BreakSystemInline(admin.TabularInline):
     model = BreakSystem
@@ -85,10 +89,11 @@ class MotorcycleVariantAdmin(admin.ModelAdmin):
     search_fields = ("motorcycle__name", "color__name")
     inlines = [VariantImageInline]
 
+    @admin.display(
+        description="Фінальна ціна",
+    )
     def final_price(self, obj):
         return f"{obj.final_price()} грн"
-
-    final_price.short_description = "Фінальна ціна"
 
 
 @admin.register(Motorcycle)
@@ -99,6 +104,7 @@ class MotorcycleAdmin(admin.ModelAdmin):
         MotorcycleVariantInline,
         SuspensionSystemInline,
         BreakSystemInline,
-        AdditionalFeaturesInline]
+        AdditionalFeaturesInline,
+    ]
     list_display = ["name", "brand", "price", "is_new"]
     prepopulated_fields = {"slug": ("name",)}

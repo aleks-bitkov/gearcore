@@ -25,7 +25,9 @@ class Cart(models.Model):
     )
 
     product = models.ForeignKey(
-        to=Motorcycle, on_delete=models.RESTRICT, verbose_name="Товар",
+        to=Motorcycle,
+        on_delete=models.RESTRICT,
+        verbose_name="Товар",
     )
     variant = models.ForeignKey(  # Добавить это поле
         to=MotorcycleVariant,
@@ -36,10 +38,14 @@ class Cart(models.Model):
     )
     quantity = models.PositiveIntegerField(default=0, verbose_name="Кількість")
     session_key = models.CharField(
-        blank=True, default="", max_length=32, verbose_name="Ключ сесії",
+        blank=True,
+        default="",
+        max_length=32,
+        verbose_name="Ключ сесії",
     )
     created_timestamp = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата додавання",
+        auto_now_add=True,
+        verbose_name="Дата додавання",
     )
 
     objects = CartQuerySet.as_manager()
@@ -56,5 +62,3 @@ class Cart(models.Model):
 
     def product_price(self):
         return round(self.product.sell_price() * self.quantity, 2)
-
-

@@ -59,7 +59,8 @@ class WishlistRemoveView(View):
 
         if not slug:
             return JsonResponse(
-                {"debug_message": "потрібен slug продукту", "html": None}, status=400,
+                {"debug_message": "потрібен slug продукту", "html": None},
+                status=400,
             )
 
         user = request.user
@@ -82,7 +83,8 @@ class WishlistRemoveView(View):
 
         try:
             wishlist_item = WishlistItem.objects.get(
-                wishlist=wishlist, product=motorcycle,
+                wishlist=wishlist,
+                product=motorcycle,
             )
             wishlist_item.delete()
         except WishlistItem.DoesNotExist:

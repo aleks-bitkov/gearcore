@@ -5,7 +5,8 @@ from django.views import View
 
 from gearcore.carts.mixins import CartMixin
 from gearcore.carts.models import Cart
-from gearcore.goods.models import Motorcycle, MotorcycleVariant
+from gearcore.goods.models import Motorcycle
+from gearcore.goods.models import MotorcycleVariant
 
 
 class CartAddView(CartMixin, View):
@@ -25,9 +26,7 @@ class CartAddView(CartMixin, View):
         else:
             Cart.objects.create(
                 user=request.user if request.user.is_authenticated else None,
-                session_key=request.session.session_key
-                if not request.user.is_authenticated
-                else "None",
+                session_key=request.session.session_key if not request.user.is_authenticated else "None",
                 product=product,
                 variant=variant,
                 quantity=1,
