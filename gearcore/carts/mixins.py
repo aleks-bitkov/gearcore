@@ -6,7 +6,7 @@ from gearcore.carts.utils import get_user_carts
 
 
 class CartMixin:
-    def get_cart(self, request, product=None, cart_id=None):
+    def get_cart(self, request, product=None, cart_id=None, variant=None):
         if request.user.is_authenticated:
             query_kwargs = {"user": request.user}
         else:
@@ -22,6 +22,7 @@ class CartMixin:
     def render_cart(self, request):
         user_cart = get_user_carts(request)
         context = {"carts": user_cart}
+
 
         referer = request.META.get("HTTP_REFERER")
         if reverse("orders:create") in referer:

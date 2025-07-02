@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
-from gearcore.goods.models import Brand
+from gearcore.goods.models import Brand, Engine
 from gearcore.goods.models import Category
 from gearcore.goods.models import Motorcycle
 from gearcore.goods.models import MotorcycleVariant
@@ -64,7 +64,6 @@ class CatalogView(ListView):
         context["selected_brands"] = self.selected_brands
         return context
 
-
 catalog_view = CatalogView.as_view()
 
 
@@ -81,8 +80,12 @@ class ProductView(DetailView):
         context["title"] = f"{self.object.name} | GearCore"
         motorcycle = self.object
 
+
         selected_variant = motorcycle.default_variant
         context["images"] = VariantImage.objects.filter(variant=selected_variant)
+        context["variants"] = MotorcycleVariant.objects.filter(motorcycle=motorcycle)
+        context["engine"] = Engine.objects.get(motorcycle=motorcycle)
+
         return context
 
 
@@ -90,54 +93,31 @@ product_view = ProductView.as_view()
 
 
 class ProductColorChangeView(View):
-    @staticmethod
-    def post(request):
+    def post(self, request):
         data = json.loads(request.body)
-        color_id = data.get("colorId", -1)
-        product_slug = data.get("productSlug", "")
+        variant_id = data.get("variantId", -1)
 
-        if color_id < 0:
-            return JsonResponse(
-                {"debug_message": "Не отримано ідентифіктор кольору"}, status=400,
-            )
+        try:
+            variant_id = int(variant_id)
+        except ValueError:
+            variant_id = -1
 
-        if not product_slug:
+        if variant_id < 0:
             return JsonResponse(
-                {"debug_message": "Не отримано slug продукту"}, status=400,
+                {"debug_message": "Не отримано ідентифіктор варіанту", "data": None}, status=400,
             )
 
         try:
-            motorcycle = Motorcycle.objects.get(slug=product_slug)
-        except Motorcycle.DoesNotExist:
+            variants = VariantImage.objects.filter(variant=variant_id)
+        except VariantImage.DoesNotExist:
             return JsonResponse(
-                {"debug_message": "такого продукту не існує"}, status=400,
+                {"debug_message": f"не знайдено зображень для варіанту #{variant_id}", "data": None}, status=400,
             )
 
-        available_variants = motorcycle.variants.filter(
-            is_available=True,
-        ).select_related("color")
+        images_info = []
+        for variant in variants:
+            images_info.append(variant.image.url)
 
-        try:
-            selected_variant = available_variants.get(color__id=color_id)
-        except MotorcycleVariant.DoesNotExist:
-            return JsonResponse(
-                {"debug_message": "не знайдено обраний варіант за кольором"}, status=400,
-            )
-
-        images = VariantImage.objects.filter(variant=selected_variant)
-
-        image_data = [
-            {
-                "id": image.id,
-                "url": image.image.url,
-                "title": image.title,
-                "is_main": image.is_main,
-                "sort_order": image.sort_order,
-            }
-            for image in images
-        ]
-
-        return JsonResponse({"images": image_data}, status=200)
-
+        return JsonResponse({"debug_message": "дані отримані", "data": images_info}, status=200)
 
 product_color_change_view = ProductColorChangeView.as_view()

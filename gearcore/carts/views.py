@@ -5,16 +5,19 @@ from django.views import View
 
 from gearcore.carts.mixins import CartMixin
 from gearcore.carts.models import Cart
-from gearcore.goods.models import Motorcycle
+from gearcore.goods.models import Motorcycle, MotorcycleVariant
 
 
 class CartAddView(CartMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         slug = data.get("slug", None)
-        product = Motorcycle.objects.get(slug=slug)
+        variant_id = data.get("variant_id", None)
 
-        cart = self.get_cart(request, product=product)
+        product = Motorcycle.objects.get(slug=slug)
+        variant = MotorcycleVariant.objects.get(id=variant_id)
+
+        cart = self.get_cart(request, product=product, variant=variant)
 
         if cart:
             cart.quantity += 1
@@ -24,8 +27,9 @@ class CartAddView(CartMixin, View):
                 user=request.user if request.user.is_authenticated else None,
                 session_key=request.session.session_key
                 if not request.user.is_authenticated
-                else None,
+                else "None",
                 product=product,
+                variant=variant,
                 quantity=1,
             )
 

@@ -1,6 +1,7 @@
 from django.db import models
 
 from gearcore.goods.models import Motorcycle
+from gearcore.goods.models import MotorcycleVariant
 from gearcore.users.models import User
 
 
@@ -22,8 +23,16 @@ class Cart(models.Model):
         null=True,
         verbose_name="Користувач",
     )
+
     product = models.ForeignKey(
         to=Motorcycle, on_delete=models.RESTRICT, verbose_name="Товар",
+    )
+    variant = models.ForeignKey(  # Добавить это поле
+        to=MotorcycleVariant,
+        on_delete=models.RESTRICT,
+        verbose_name="Варіант (колір)",
+        null=True,  # Можно сделать необязательным для совместимости
+        blank=True,
     )
     quantity = models.PositiveIntegerField(default=0, verbose_name="Кількість")
     session_key = models.CharField(

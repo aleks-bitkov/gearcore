@@ -427,9 +427,6 @@ class MotorcycleVariant(models.Model):
         return self.images.filter(is_main=True).first()
 
 
-
-
-
 class VariantImage(models.Model):
     """Изображения для конкретного варианта мотоцикла"""
 

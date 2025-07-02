@@ -35,6 +35,7 @@ jobs:
 
   # With no caching at all the entire ci process takes 3m to complete!
   pytest:
+    needs: [linter]
     runs-on: ubuntu-latest
 
     steps:

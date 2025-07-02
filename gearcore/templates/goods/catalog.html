@@ -131,7 +131,7 @@
 
                   <!-- Кнопка добавления в корзину -->
                   <div class="d-grid">
-                    <form action="{% url 'cart:add' %}" data-product-slug="{{ product.slug }}" method="post"
+                    <form action="{% url 'cart:add' %}" data-product-slug="{{ product.slug }}" data-product-variant-id="{{ product.default_variant.id }}" method="post"
                           class="fromAddCart">
                       {% csrf_token %}
                       <button class="btn btn-success w-100 card-add-cart" type="submit" title="До кошика">

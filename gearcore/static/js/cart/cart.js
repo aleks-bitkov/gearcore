@@ -163,16 +163,18 @@ class CartManager {
 
     async handleCartAdd(form, csrfToken) {
         const productSlug = form.dataset.productSlug;
+        const productVariantId = form.dataset.productVariantId
         const url = form.getAttribute('action');
 
-        if (!productSlug || !url) {
+        if (!productSlug || !url || !productVariantId) {
             console.error('Відсутні необхідні дані для додавання');
             return;
         }
 
         try {
             const data = await this.makeRequest(url, {
-                slug: productSlug
+                slug: productSlug,
+                variant_id: productVariantId
             }, csrfToken);
 
             this.handleResponse(data, "add");
