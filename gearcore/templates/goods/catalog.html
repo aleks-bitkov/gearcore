@@ -74,7 +74,7 @@
                 <form action="{% if product.is_favorite %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
                       method="post"
                       class="heart-form"
-                      data-product-slug="{{ product.slug }}">
+                      data-product-variant-id="{{ product.default_variant.id }}">
                   {% csrf_token %}
                   <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if product.is_favorite %}active{% endif %}"
                           title="До улюблених"
@@ -107,6 +107,7 @@
                       {{ product.headline }}
                     {% else %}
                       {{ product.name }}
+                      {{ product.is_favorite }}
                     {% endif %}
                   {% endautoescape %}
                 </h6>
@@ -164,7 +165,7 @@
             {% if page_obj.has_previous %}
               <li class="page-item">
                 <a class="page-link bg-dark text-light border-secondary"
-                   href="?page={% change_params page=page_obj.previous_page_number %}"
+                   href="?{% change_params page=page_obj.previous_page_number %}"
                    aria-label="Попередня">
                   <span aria-hidden="true">
                     <svg width="17px"
@@ -218,7 +219,7 @@
             {% if page_obj.has_next %}
               <li class="page-item">
                 <a class="page-link bg-dark text-light border-secondary"
-                   href="?page={% change_params page=page_obj.next_page_number %}">
+                   href="?{% change_params page=page_obj.next_page_number %}">
                   <span aria-hidden="true">
                     <svg width="17px"
                          height="24px"

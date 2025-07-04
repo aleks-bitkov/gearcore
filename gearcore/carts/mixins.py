@@ -12,8 +12,8 @@ class CartMixin:
         else:
             query_kwargs = {"session_key": request.session.session_key}
 
-        if product:
-            query_kwargs["product"] = product
+        if variant:
+            query_kwargs["variant"] = variant
         elif cart_id:
             query_kwargs["id"] = cart_id
 

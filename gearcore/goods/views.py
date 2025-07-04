@@ -1,8 +1,11 @@
 import json
 
+from django.core.paginator import InvalidPage
 from django.db.models import Exists
 from django.db.models import OuterRef
 from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import Http404
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
@@ -14,7 +17,7 @@ from gearcore.goods.models import Motorcycle
 from gearcore.goods.models import MotorcycleVariant
 from gearcore.goods.models import VariantImage
 from gearcore.goods.utils import q_search
-from gearcore.wishlist.models import WishlistItem
+from gearcore.wishlist.models import WishlistItem, Wishlist
 
 
 class CatalogView(ListView):
@@ -36,14 +39,19 @@ class CatalogView(ListView):
         if query:
             products = q_search(query)
         else:
-            products = Motorcycle.objects.annotate(
-                is_favorite=Exists(
-                    WishlistItem.objects.filter(
-                        wishlist__user=self.request.user,
-                        product=OuterRef("pk"),
+            if self.request.user.is_authenticated:
+
+                products = Motorcycle.objects.annotate(
+                    is_favorite=Exists(
+                        WishlistItem.objects.filter(
+                            wishlist__user=self.request.user,
+                            variant__motorcycle=OuterRef("pk"),  # если variant связан с motorcycle
+                        ),
                     ),
-                ),
-            ).all()
+                ).all()
+
+            else:
+                products = Motorcycle.objects.all()
 
         if filter_brands:
             products = super().get_queryset().filter(brand__slug__in=filter_brands)
@@ -81,11 +89,21 @@ class ProductView(DetailView):
         context = super().get_context_data(**kwargs)
         context["title"] = f"{self.object.name} | GearCore"
         motorcycle = self.object
+        wishlist_id = []
+        try:
+            wishlist = Wishlist.objects.get(user=self.request.user)
+            wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
+            wishlist_id = [item.variant.id for item in wishlist_items]
+        except Wishlist.DoesNotExist:
+            ...
+
+
 
         selected_variant = motorcycle.default_variant
         context["images"] = VariantImage.objects.filter(variant=selected_variant)
         context["variants"] = MotorcycleVariant.objects.filter(motorcycle=motorcycle)
         context["engine"] = Engine.objects.get(motorcycle=motorcycle)
+        context["wishlist_id"] = wishlist_id
 
         return context
 
@@ -119,7 +137,19 @@ class ProductColorChangeView(View):
 
         images_info = [variant.image.url for variant in variants]
 
-        return JsonResponse({"debug_message": "дані отримані", "data": images_info}, status=200)
+        wishlist_id = []
+        try:
+            wishlist = Wishlist.objects.get(user=self.request.user)
+            wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
+            wishlist_id = [item.variant.id for item in wishlist_items]
+        except Wishlist.DoesNotExist:
+            ...
+
+        return JsonResponse({
+            "debug_message": "дані отримані",
+            "data": images_info,
+            "wishlistId": wishlist_id,
+        }, status=200)
 
 
 product_color_change_view = ProductColorChangeView.as_view()

@@ -29,12 +29,11 @@ class Cart(models.Model):
         on_delete=models.RESTRICT,
         verbose_name="Товар",
     )
+    
     variant = models.ForeignKey(  # Добавить это поле
         to=MotorcycleVariant,
         on_delete=models.RESTRICT,
         verbose_name="Варіант (колір)",
-        null=True,  # Можно сделать необязательным для совместимости
-        blank=True,
     )
     quantity = models.PositiveIntegerField(default=0, verbose_name="Кількість")
     session_key = models.CharField(

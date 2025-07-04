@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.views import View
 
-from gearcore.goods.models import Motorcycle
+from gearcore.goods.models import MotorcycleVariant
 from gearcore.wishlist.models import Wishlist
 from gearcore.wishlist.models import WishlistItem
 
@@ -12,15 +12,14 @@ from gearcore.wishlist.models import WishlistItem
 class WishlistAddView(View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
-        slug = data.get("productSlug", "")
-
-        if not slug:
+        variant_id = data.get("variantId", "")
+        if not variant_id:
             return JsonResponse(
                 {
-                    "status": "400",
-                    "debug_message": "потрібен slug продукту",
+                    "debug_message": "потрібен id варіанту продукту",
                     "html": None,
                 },
+                status=400,
             )
 
         user = request.user
@@ -28,17 +27,17 @@ class WishlistAddView(View):
         wishlist, _ = Wishlist.objects.get_or_create(user=user)
 
         try:
-            motorcycle = Motorcycle.objects.get(slug=slug)
-        except Motorcycle.DoesNotExist:
+            variant = MotorcycleVariant.objects.get(id=variant_id)
+        except MotorcycleVariant.DoesNotExist:
             return JsonResponse(
                 {
                     "status": "400",
-                    "debug_message": "такий товар не знайдено",
+                    "debug_message": "такий варіант товар не знайдено",
                     "html": None,
                 },
             )
 
-        WishlistItem.objects.get_or_create(wishlist=wishlist, product=motorcycle)
+        WishlistItem.objects.get_or_create(wishlist=wishlist, variant=variant)
 
         return JsonResponse(
             {
@@ -55,11 +54,11 @@ wishlist_add_view = WishlistAddView.as_view()
 class WishlistRemoveView(View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
-        slug = data.get("productSlug", "")
+        variant_id = data.get("variantId", "")
 
-        if not slug:
+        if not variant_id:
             return JsonResponse(
-                {"debug_message": "потрібен slug продукту", "html": None},
+                {"debug_message": "потрібен id варіант продукту", "html": None},
                 status=400,
             )
 
@@ -69,22 +68,22 @@ class WishlistRemoveView(View):
             wishlist = Wishlist.objects.get(user=user)
         except Wishlist.DoesNotExist:
             return JsonResponse(
-                {"debug_message": "не знайдено списку для користувача ", "html": None},
+                {"debug_message": "не знайдено улюбленого списку для користувача ", "html": None},
                 status=400,
             )
 
         try:
-            motorcycle = Motorcycle.objects.get(slug=slug)
-        except Motorcycle.DoesNotExist:
+            variant = MotorcycleVariant.objects.get(id=variant_id)
+        except MotorcycleVariant.DoesNotExist:
             return JsonResponse(
-                {"debug_message": f"не знайдено товару за slug '{slug}'", "html": None},
+                {"debug_message": f"не знайдено товару за id '{variant_id}'", "html": None},
                 status=400,
             )
 
         try:
             wishlist_item = WishlistItem.objects.get(
                 wishlist=wishlist,
-                product=motorcycle,
+                variant=variant,
             )
             wishlist_item.delete()
         except WishlistItem.DoesNotExist:

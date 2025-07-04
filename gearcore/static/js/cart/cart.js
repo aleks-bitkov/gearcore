@@ -6,7 +6,7 @@ class CartManager {
 
     init() {
         document.addEventListener("DOMContentLoaded", () => {
-            this.cartWrapper = document.querySelector('#cartWrapper');
+            this.cartWrapper = document.querySelectorAll('#cartWrapper');
 
             if (!this.cartWrapper) {
                 console.warn('Не вдалося знайти cartWrapper');
@@ -99,8 +99,9 @@ class CartManager {
 
     handleResponse(data, action="") {
         if (data.status === 200) {
-            this.cartWrapper.innerHTML = data.html;
-
+            this.cartWrapper.forEach(cartWrapper=>{
+                cartWrapper.innerHTML = data.html;
+            })
             if (action === "remove"){
                 showAlert('Товар було виделно з кошику')
             }else if (action === "add") {
@@ -124,6 +125,7 @@ class CartManager {
         const url = form.getAttribute('action');
 
         if (!action || !cartId || !url) {
+            showAlert('Сталася помилка при зміні кількості товару')
             console.error('Відсутні необхідні дані для зміни кількості');
             return;
         }
@@ -167,6 +169,7 @@ class CartManager {
         const url = form.getAttribute('action');
 
         if (!productSlug || !url || !productVariantId) {
+            showAlert('Сталася помилка при додавані товару до кошика')
             console.error('Відсутні необхідні дані для додавання');
             return;
         }
@@ -184,163 +187,4 @@ class CartManager {
     }
 }
 
-// Initialize the cart manager
-const cartManager = new CartManager();
-// document.addEventListener("DOMContentLoaded", function () {
-//     const cartWrapper = document.querySelector('#cartWrapper');
-//
-//     if (!cartWrapper) {
-//         console.warn('Не вдалося знайти cartWrapper');
-//         return;
-//     }
-//
-//     function bindCartEvents() {
-//         const formsChangeCount = document.querySelectorAll(".formChangeCount, .fromRemoveCart, .fromAddCart");
-//
-//         formsChangeCount.forEach(form => {
-//             form.removeEventListener('submit', handleFormSubmit);
-//             form.addEventListener('submit', handleFormSubmit);
-//         });
-//     }
-//
-//     function handleFormSubmit(event) {
-//         event.preventDefault();
-//
-//         const form = event.target;
-//         const csrfTokenInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
-//
-//
-//         if (!csrfTokenInput) {
-//             console.error('CSRF токен не знайдено');
-//             return;
-//         }
-//
-//         const csrf_token = csrfTokenInput.value;
-//
-//
-//         if (form.classList.contains('formChangeCount')) {
-//             handleCartQuantityChange(form, event, csrf_token)
-//         } else if (form.classList.contains('fromRemoveCart')) {
-//             handleCartRemoval(form, csrf_token)
-//         } else if (form.classList.contains('fromAddCart')){
-//             handleCartAdd(form, csrf_token)
-//         }else{
-//             console.error('Не зрозуміла дія')
-//         }
-//     }
-//
-//     function handleCartQuantityChange(form, event, csrf_token) {
-//         const action = event.submitter.dataset.action;
-//         const cartId = form.dataset.cartId;
-//         const url = form.getAttribute('action');
-//
-//
-//         fetch(url, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': csrf_token,
-//             },
-//             body: JSON.stringify({
-//                 "action": action,
-//                 "id_cart": parseInt(cartId)
-//             })
-//         })
-//             .then((response) => {
-//                 if (!response.ok) {
-//                     throw new Error(`HTTP error! status: ${response.status}`);
-//                 }
-//                 return response.json();
-//             })
-//             .then((data) => {
-//
-//                 if (data.status === 200) {
-//                     cartWrapper.innerHTML = data.html;
-//                     bindCartEvents();
-//                 } else {
-//                     console.error('Помилка сервера:', data.debug_message);
-//                     alert('Відбулася невідома помилка, вибачте')
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.error('Помилка запиту:', error);
-//                 alert('Відбулася помилка при оновлені кошика');
-//             });
-//     }
-//
-//     function handleCartRemoval(form, csrf_token) {
-//         const cartId = form.dataset.cartId;
-//         const url = form.getAttribute('action');
-//
-//
-//         fetch(url, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': csrf_token,
-//             },
-//             body: JSON.stringify({
-//                 "id_cart": parseInt(cartId)
-//             })
-//         })
-//             .then((response) => {
-//                 if (!response.ok) {
-//                     throw new Error(`HTTP error! status: ${response.status}`);
-//                 }
-//                 return response.json();
-//             })
-//             .then((data) => {
-//
-//                 if (data.status === 200) {
-//                     cartWrapper.innerHTML = data.html;
-//                     bindCartEvents();
-//                 } else {
-//                     console.error('Помилка сервера:', data.debug_message);
-//                     alert('Відбулася невідома помилка, вибачте')
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.error('Помилка запиту:', error);
-//                 alert('Відбулася помилка при оновлені кошика');
-//             });
-//     }
-//
-//     function handleCartAdd(form, csrf_token) {
-//         const productSlug = form.dataset.productSlug;
-//         const url = form.getAttribute('action');
-//
-//
-//         fetch(url, {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'X-CSRFToken': csrf_token,
-//             },
-//             body: JSON.stringify({
-//                 "slug": productSlug
-//             })
-//         })
-//             .then((response) => {
-//                 if (!response.ok) {
-//                     throw new Error(`HTTP error! status: ${response.status}`);
-//                 }
-//                 return response.json();
-//             })
-//             .then((data) => {
-//
-//                 if (data.status === 200) {
-//                     cartWrapper.innerHTML = data.html;
-//                     bindCartEvents();
-//                 } else {
-//                     console.error('Помилка сервера:', data.debug_message);
-//                     alert('Відбулася невідома помилка, вибачте')
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.error('Помилка запиту:', error);
-//                 alert('Відбулася помилка при оновлені кошика');
-//             });
-//     }
-//
-//     bindCartEvents();
-// });
+new CartManager();

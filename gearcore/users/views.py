@@ -14,10 +14,12 @@ from rest_framework.reverse import reverse_lazy
 
 from gearcore.carts.models import Cart
 from gearcore.common.mixins import CacheMixin
+from gearcore.goods.models import VariantImage
 from gearcore.orders.models import Order
 from gearcore.orders.models import OrderItem
 from gearcore.users.forms import UserProfileForm
 from gearcore.users.models import User
+from gearcore.wishlist.models import WishlistItem, Wishlist
 
 
 class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
@@ -91,7 +93,7 @@ def user_orders(request):
         Prefetch(
             "orderitem_set",
             queryset=OrderItem.objects.select_related("product").prefetch_related(
-                "product__images",
+                "product__variants__images",
             ),
         ),
     )
@@ -107,7 +109,14 @@ class UserWishlistView(LoginRequiredMixin, TemplateView):
     template_name = "users/user_wishlist.html"
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+
+        wishlist = Wishlist.objects.get(user=self.request.user)
+        wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).select_related("product")
+
+        context["wishlist_items"] = wishlist_items
+
+        return context
 
 
 user_wishlist_view = UserWishlistView.as_view()

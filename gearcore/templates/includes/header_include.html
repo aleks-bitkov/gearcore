@@ -89,7 +89,7 @@
                   {% if not request.resolver_match.url_name == 'create' %}id="cartToggle"{% endif %}>
             <i class="bi bi-bag fs-5"></i>
           </button>
-          <div id="cartWrapper" class="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
+          <div {% if not request.resolver_match.url_name == 'create' %}id="cartWrapper"{% endif %}  class="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
         </li>
         {% if user.is_authenticated %}
           {# ============: [START] Профіль авторизованого користувача :============== #}
@@ -103,7 +103,7 @@
                 панель</a>
               {% endif %}
               <a href="{% url 'users:detail' %}"><i class="bi bi-person"></i> Мій профіль</a>
-              <a href="#"><i class="bi bi-box-seam"></i> Мої замовлення</a>
+              <a href="{% url 'users:orders' %}"><i class="bi bi-box-seam"></i> Мої замовлення</a>
               <a href="{% url 'users:wishlist' %}"><i class="bi bi-heart"></i> Обране</a>
               <a href="#"><i class="bi bi-gear"></i> Налаштування</a>
               <a href="{% url 'account_logout' %}"><i class="bi bi-box-arrow-right"></i> Вийти</a>

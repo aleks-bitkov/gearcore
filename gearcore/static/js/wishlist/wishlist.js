@@ -40,10 +40,10 @@ heartsForm?.forEach(form=>{
         }
 
         const url = form.getAttribute('action');
-        const productSlug = form.dataset.productSlug;
+        const variantId = form.dataset.productVariantId;
 
         const data = {
-            "productSlug": productSlug
+            "variantId": variantId
         }
 
         let response = await makeRequest(url, data, csrfToken)

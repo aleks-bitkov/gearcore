@@ -7,7 +7,7 @@
 {% endblock title %}
 {% block css %}
   {{ block.super }}
-  <link href="{% static 'css/goods/product.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/goods/product.css' %}" rel="stylesheet"/>
 {% endblock css %}
 {% block content %}
   <div class="product-wrapper">
@@ -19,7 +19,7 @@
         <div class="carousel-inner">
           {% for item in images %}
             <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
-              <img src="{{ item.image.url }}" class="d-block w-100" alt="Мотоцикл 1" />
+              <img src="{{ item.image.url }}" class="d-block w-100" alt="Мотоцикл 1"/>
             </div>
           {% endfor %}
         </div>
@@ -52,8 +52,8 @@
     </div>
   </div>
   <!-- Форма выбора цвета под каруселью -->
-  <div class="form-wrapper">
-    <div class="color-options mb-3">
+  <div class="form-wrapper ">
+    <div class="color-options mb-3 d-flex justify-content-between align-items-center">
       <form action="{% url 'goods:product_color_change' %}"
             method="post"
             id="colorForm">
@@ -62,10 +62,49 @@
           <button class="color-btn {% if forloop.counter0 == 0 %}active{% endif %}"
                   data-variant-id="{{ variant.id }}"
                   style="background-color: {{ variant.color.hex_code }}"></button>
+
+          {{ variant.id }}
         {% endfor %}
       </form>
+
+      <div class="d-flex align-items-center justify-content-center gap-2">
+        <form action="{% url 'cart:add' %}"
+              data-product-slug="{{ product.slug }}"
+              data-product-variant-id="{{ product.default_variant.id }}"
+              method="post"
+              class="fromAddCart">
+          {% csrf_token %}
+          <button class="btn btn-success w-100 card-add-cart"
+                  type="submit"
+                  title="До кошика">
+            <i class="bi bi-cart-plus me-1"></i> До кошика
+          </button>
+        </form>
+
+        <form
+          action="{% if product.default_variant.id in wishlist_id %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
+          method="post"
+          class="heart-form"
+          data-product-variant-id="{{ product.default_variant.id }}"
+          data-add="{% url "wishlist:add" %}"
+          data-remove="{% url "wishlist:remove" %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if product.default_variant.id in wishlist_id %}active{% endif %}"
+                  title="До улюблених"
+                  type="submit">
+            {% if product.default_variant.id in wishlist_id %}
+              <i class="bi bi-heart-fill"></i>
+            {% else %}
+              <i class="bi bi-heart"></i>
+            {% endif %}
+          </button>
+
+        </form>
+      </div>
     </div>
   </div>
+
+
 {% endblock content %}
 {% block javascript %}
   {{ block.super }}
