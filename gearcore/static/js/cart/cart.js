@@ -165,6 +165,12 @@ class CartManager {
 
     async handleCartAdd(form, csrfToken) {
         const productSlug = form.dataset.productSlug;
+
+
+
+
+
+
         const productVariantId = form.dataset.productVariantId
         const url = form.getAttribute('action');
 

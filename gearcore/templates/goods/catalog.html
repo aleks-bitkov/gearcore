@@ -9,7 +9,7 @@
 {% endblock title %}
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/goods/card.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/goods/card.css' %}"/>
 {% endblock css %}
 {% block content %}
   <div class="row">
@@ -18,24 +18,24 @@
       <h5 class="mb-3">Фільтри</h5>
       <form method="get"
             action="{% if request.GET.q %}{% url "goods:search" %}{% else %}{% url "goods:catalog" %}{% endif %}">
-        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}" />{% endif %}
+        {% if request.GET.q %}<input type="hidden" name="q" value="{{ request.GET.q }}"/>{% endif %}
         <div class="mb-3">
           <label class="form-label">Категорія</label>
-          <br />
+          <br/>
           {% for category in categories %}
             <label>
               {{ category.name }}
               <input name="category"
                      value="{{ category.slug }}"
                      type="checkbox"
-                     {% if category.slug in selected_categories %}checked{% endif %} />
+                     {% if category.slug in selected_categories %}checked{% endif %}/>
             </label>
-            <br />
+            <br/>
           {% endfor %}
         </div>
         <div class="mb-3">
           <label class="form-label">Бренд</label>
-          <br />
+          <br/>
           {% for brand in brands %}
             <label>
               {{ brand }}
@@ -43,14 +43,14 @@
                      value="{{ brand.slug }}"
                      type="checkbox"
                      aria-label="Checkbox for following text input"
-                     {% if brand.slug in selected_brands %}checked{% endif %} />
+                     {% if brand.slug in selected_brands %}checked{% endif %}/>
             </label>
-            <br />
+            <br/>
           {% endfor %}
         </div>
         <div class="mb-3">
           <label for="priceRange" class="form-label">Ціна</label>
-          <input type="range" class="form-range" min="0" max="50000" id="priceRange" />
+          <input type="range" class="form-range" min="0" max="50000" id="priceRange"/>
         </div>
         <button type="submit" class="btn btn-outline-light w-100">Застосувати</button>
       </form>
@@ -80,6 +80,7 @@
                       <button type="button"
                               data-bs-target="#carousel-{{ forloop.parentloop.counter }}"
                               data-bs-slide-to="{{ forloop.counter0 }}"
+                              data-variant-id="{{ variant.id }}"
                               class="{% if forloop.first %}active{% endif %}"
                               aria-current="true"></button>
                     {% endfor %}
@@ -89,23 +90,26 @@
                 <div class="carousel-inner rounded-top">
                   {% for variant in product.available_variants %}
                     {% comment %}кожен варіант товару{% endcomment %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}"
+                         data-variant-id="{{ variant.id }}">
                       <a href="{% url 'goods:product' product.slug %}">
-                        <img src="                      {{ variant.main_image.image.url }}"
+                        <img src="{{ variant.main_image.image.url }}"
                              class="d-block w-100 object-fit-cover"
                              alt="{{ product.name }}"
-                             height="250px" />
+                             height="250px"/>
                       </a>
-                      <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1 custom-block-right">
+                      <div
+                        class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1 custom-block-right">
                         {% comment %} START wishlist button {% endcomment %}
-                        <form action="{% if variant.id in wishlist_id %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
+                        <form action="{% if variant.id in wishlist_id %}{% url 'wishlist:remove' %}{% else %}{% url 'wishlist:add' %}{% endif %}"
                               method="post"
                               class="heart-form"
                               data-product-variant-id="{{ variant.id }}">
                           {% csrf_token %}
-                          <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if variant.id in wishlist_id %}active{% endif %}"
-                                  title="До улюблених"
-                                  type="submit">
+                          <button
+                            class="btn btn-sm btn-outline-light mb-2 heart-btn {% if variant.id in wishlist_id %}active{% endif %}"
+                            title="До улюблених"
+                            type="submit">
                             {% if variant.id in wishlist_id %}
                               <i class="bi bi-heart-fill"></i>
                             {% else %}
@@ -118,10 +122,10 @@
                         <form action="#" method="post">
                           {% csrf_token %}
                           <button type="submit" class="btn btn-sm btn-outline-light" title="Порівняти">
-                            {# btn-primary active #}
                             <i class="bi bi-arrow-left-right"></i>
                           </button>
                         </form>
+                        {% comment %} END compare button {% endcomment %}
                       </div>
                     </div>
                   {% endfor %}
@@ -138,7 +142,7 @@
                     {% endif %}
                   {% endautoescape %}
                 </h6>
-                <hr />
+                <hr/>
                 <p class="card-text small">
                   {% autoescape off %}
                     {% if product.headline %}
@@ -154,20 +158,30 @@
                     <a href="{% url 'goods:product' product.slug %}"
                        class="btn btn-sm btn-outline-light card-btn-custom">Детальніше</a>
                   </div>
-                  <!-- Кнопка добавления в корзину -->
+
                   <div class="d-grid">
-                    <form action="{% url 'cart:add' %}"
-                          data-product-slug="{{ product.slug }}"
-                          data-product-variant-id="{{ product.default_variant.id }}"
-                          method="post"
-                          class="fromAddCart">
-                      {% csrf_token %}
-                      <button class="btn btn-success w-100 card-add-cart"
-                              type="submit"
-                              title="До кошика">
-                        <i class="bi bi-cart-plus me-1"></i> До кошика
-                      </button>
-                    </form>
+                    {% comment %} Слайдер для форм "До кошика" {% endcomment %}
+                    <div id="forms-carousel-{{ forloop.counter }}" class="carousel slide">
+                      <div class="carousel-inner">
+                        {% for variant in product.available_variants %}
+                          <div class="carousel-item {% if forloop.first %}active{% endif %}"
+                               data-variant-id="{{ variant.id }}">
+                            <form action="{% url 'cart:add' %}"
+                                  data-product-slug="{{ product.slug }}"
+                                  method="post"
+                                  class="fromAddCart"
+                                  data-product-variant-id="{{ variant.id }}">
+                              {% csrf_token %}
+                              <button class="btn btn-success w-100 card-add-cart"
+                                      type="submit"
+                                      title="До кошика">
+                                <i class="bi bi-cart-plus me-1"></i> До кошика
+                              </button>
+                            </form>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -207,7 +221,8 @@
                       <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
                       </g>
                       <g id="SVGRepo_iconCarrier">
-                      <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z" fill="#f0f0f0f" />
+                      <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
+                            fill="#f0f0f0f"/>
                       </g>
                     </svg>
                   </span>
@@ -218,14 +233,15 @@
                 <span class="page-link bg-dark text-light border-secondary"
                       aria-hidden="true">
                   <svg width="17px" height="24px" viewBox="0 0 1024 1024"
-                    class="icon justify-content-center d-flex align-items-center" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" fill="#f0f0f0"">
+                       class="icon justify-content-center d-flex align-items-center" version="1.1"
+                       xmlns="http://www.w3.org/2000/svg" fill="#f0f0f0">
                     <g stroke-width="0">
                     </g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
                     </g>
                     <g id="SVGRepo_iconCarrier">
-                    <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z" fill="#cccccc" />
+                    <path d="M768 903.232l-50.432 56.768L256 512l461.568-448 50.432 56.768L364.928 512z"
+                          fill="#cccccc"/>
                     </g>
                   </svg>
                 </span>
@@ -259,7 +275,7 @@
                       <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
                       </g>
                       <g id="SVGRepo_iconCarrier">
-                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="orange" />
+                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="orange"/>
                       </g>
                     </svg>
                   </span>
@@ -281,7 +297,7 @@
                       <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round">
                       </g>
                       <g id="SVGRepo_iconCarrier">
-                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="#cccccc" />
+                      <path d="M256 120.768L306.432 64 768 512l-461.568 448L256 903.232 659.072 512z" fill="#cccccc"/>
                       </g>
                     </svg>
                   </span>
@@ -294,3 +310,8 @@
     </section>
   </div>
 {% endblock content %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script src="{% static 'js/goods/catalog.js' %}"></script>
+{% endblock javascript %}
