@@ -148,6 +148,10 @@ class Motorcycle(models.Model):
             return default_variant.images.filter(is_main=True).first()
         return None
 
+    @property
+    def available_variants(self):
+        return self.variants.filter(is_available=True, motorcycle=self)
+
 
 class Engine(models.Model):
     """Характеристики двигуна"""

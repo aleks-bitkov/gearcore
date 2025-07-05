@@ -29,7 +29,7 @@ class Cart(models.Model):
         on_delete=models.RESTRICT,
         verbose_name="Товар",
     )
-    
+
     variant = models.ForeignKey(  # Добавить это поле
         to=MotorcycleVariant,
         on_delete=models.RESTRICT,

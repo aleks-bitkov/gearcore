@@ -35,3 +35,15 @@
   background: rgba(0, 0, 0, 0.6);
   border-bottom-left-radius: 0.5rem;
 }
+
+.dot-btn {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background-color: #ffcd8a;
+  opacity: 1;
+}
+.dot-btn.active {
+  background-color: #f89c2d;
+}

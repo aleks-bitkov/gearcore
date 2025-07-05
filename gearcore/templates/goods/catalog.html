@@ -70,36 +70,63 @@
         {% for product in products %}
           <div class="col position-relative">
             <div class="card h-100 bg-dark text-light border-secondary position-relative">
-              <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1 custom-block-right">
-                <form action="{% if product.is_favorite %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
-                      method="post"
-                      class="heart-form"
-                      data-product-variant-id="{{ product.default_variant.id }}">
-                  {% csrf_token %}
-                  <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if product.is_favorite %}active{% endif %}"
-                          title="До улюблених"
-                          type="submit">
-                    {% if product.is_favorite %}
-                      <i class="bi bi-heart-fill"></i>
-                    {% else %}
-                      <i class="bi bi-heart"></i>
-                    {% endif %}
-                  </button>
-                </form>
-                <button class="btn btn-sm btn-outline-light mb-2" title="Змінити колір">
-                  <i class="bi bi-palette"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-light" title="Порівняти">
-                  {# btn-primary active #}
-                  <i class="bi bi-arrow-left-right"></i>
-                </button>
+              {% comment %} слайдер для кожного варіанту {% endcomment %}
+              <div id="carousel-{{ forloop.counter }}"
+                   class="carousel slide position-relative">
+                {% comment %} індикатори {% endcomment %}
+                {% if product.available_variants|length > 1 %}
+                  <div class="carousel-indicators">
+                    {% for variant in product.available_variants %}
+                      <button type="button"
+                              data-bs-target="#carousel-{{ forloop.parentloop.counter }}"
+                              data-bs-slide-to="{{ forloop.counter0 }}"
+                              class="{% if forloop.first %}active{% endif %}"
+                              aria-current="true"></button>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+                {% comment %} кінець індикаторів {% endcomment %}
+                <div class="carousel-inner rounded-top">
+                  {% for variant in product.available_variants %}
+                    {% comment %}кожен варіант товару{% endcomment %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                      <a href="{% url 'goods:product' product.slug %}">
+                        <img src="                      {{ variant.main_image.image.url }}"
+                             class="d-block w-100 object-fit-cover"
+                             alt="{{ product.name }}"
+                             height="250px" />
+                      </a>
+                      <div class="position-absolute top-0 end-0 p-2 d-flex flex-column hover-actions z-1 custom-block-right">
+                        {% comment %} START wishlist button {% endcomment %}
+                        <form action="{% if variant.id in wishlist_id %}{% url "wishlist:remove" %}{% else %}{% url "wishlist:add" %}{% endif %}"
+                              method="post"
+                              class="heart-form"
+                              data-product-variant-id="{{ variant.id }}">
+                          {% csrf_token %}
+                          <button class="btn btn-sm btn-outline-light mb-2 heart-btn {% if variant.id in wishlist_id %}active{% endif %}"
+                                  title="До улюблених"
+                                  type="submit">
+                            {% if variant.id in wishlist_id %}
+                              <i class="bi bi-heart-fill"></i>
+                            {% else %}
+                              <i class="bi bi-heart"></i>
+                            {% endif %}
+                          </button>
+                        </form>
+                        {% comment %} END wishlist button {% endcomment %}
+                        {% comment %} START compare button {% endcomment %}
+                        <form action="#" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-sm btn-outline-light" title="Порівняти">
+                            {# btn-primary active #}
+                            <i class="bi bi-arrow-left-right"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
               </div>
-              <a href="{% url 'goods:product' product.slug %}">
-                <img src="{{ product.main_image_obj.image.url }}"
-                     class="card-img-top object-fit-cover"
-                     alt="{{ product.name }}"
-                     height="250px" />
-              </a>
               <div class="card-body d-flex flex-column">
                 <h6 class="card-title">
                   {% autoescape off %}

@@ -1,11 +1,8 @@
 import json
 
-from django.core.paginator import InvalidPage
 from django.db.models import Exists
 from django.db.models import OuterRef
 from django.http import JsonResponse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
@@ -17,14 +14,15 @@ from gearcore.goods.models import Motorcycle
 from gearcore.goods.models import MotorcycleVariant
 from gearcore.goods.models import VariantImage
 from gearcore.goods.utils import q_search
-from gearcore.wishlist.models import WishlistItem, Wishlist
+from gearcore.wishlist.models import Wishlist
+from gearcore.wishlist.models import WishlistItem
 
 
 class CatalogView(ListView):
     model = Motorcycle
     template_name = "goods/catalog.html"
     context_object_name = "products"
-    paginate_by = 1
+    paginate_by = 3
 
     def __init__(self):
         super().__init__()
@@ -38,20 +36,18 @@ class CatalogView(ListView):
 
         if query:
             products = q_search(query)
-        else:
-            if self.request.user.is_authenticated:
-
-                products = Motorcycle.objects.annotate(
-                    is_favorite=Exists(
-                        WishlistItem.objects.filter(
-                            wishlist__user=self.request.user,
-                            variant__motorcycle=OuterRef("pk"),  # если variant связан с motorcycle
-                        ),
+        elif self.request.user.is_authenticated:
+            products = Motorcycle.objects.annotate(
+                is_favorite=Exists(
+                    WishlistItem.objects.filter(
+                        wishlist__user=self.request.user,
+                        variant__motorcycle=OuterRef("pk"),
                     ),
-                ).all()
+                ),
+            ).all()
 
-            else:
-                products = Motorcycle.objects.all()
+        else:
+            products = Motorcycle.objects.all()
 
         if filter_brands:
             products = super().get_queryset().filter(brand__slug__in=filter_brands)
@@ -71,6 +67,34 @@ class CatalogView(ListView):
         context["categories"] = Category.objects.all()
         context["selected_categories"] = self.selected_categories
         context["selected_brands"] = self.selected_brands
+
+        all_products = Motorcycle.objects.all()
+        images = {}
+
+        for product in all_products:
+            variants = MotorcycleVariant.objects.filter(motorcycle=product)
+
+            for variant in variants:
+                variant_image = VariantImage.objects.get(variant=variant, is_main=True)
+                try:
+                    images[product.slug].append(variant_image)
+                except KeyError:
+                    images[product.slug] = []
+                    images[product.slug].append(variant_image)
+
+        wishlist_id = []
+        try:
+            wishlist = Wishlist.objects.get(user=self.request.user)
+            wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
+            wishlist_id = [item.variant.id for item in wishlist_items]
+        except Wishlist.DoesNotExist:
+            ...
+
+        variants = MotorcycleVariant.objects.all()
+
+        context["images"] = images
+        context["variants"] = variants
+        context["wishlist_id"] = wishlist_id
         return context
 
 
@@ -96,8 +120,6 @@ class ProductView(DetailView):
             wishlist_id = [item.variant.id for item in wishlist_items]
         except Wishlist.DoesNotExist:
             ...
-
-
 
         selected_variant = motorcycle.default_variant
         context["images"] = VariantImage.objects.filter(variant=selected_variant)
@@ -145,11 +167,14 @@ class ProductColorChangeView(View):
         except Wishlist.DoesNotExist:
             ...
 
-        return JsonResponse({
-            "debug_message": "дані отримані",
-            "data": images_info,
-            "wishlistId": wishlist_id,
-        }, status=200)
+        return JsonResponse(
+            {
+                "debug_message": "дані отримані",
+                "data": images_info,
+                "wishlistId": wishlist_id,
+            },
+            status=200,
+        )
 
 
 product_color_change_view = ProductColorChangeView.as_view()

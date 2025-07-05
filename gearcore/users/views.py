@@ -14,12 +14,12 @@ from rest_framework.reverse import reverse_lazy
 
 from gearcore.carts.models import Cart
 from gearcore.common.mixins import CacheMixin
-from gearcore.goods.models import VariantImage
 from gearcore.orders.models import Order
 from gearcore.orders.models import OrderItem
 from gearcore.users.forms import UserProfileForm
 from gearcore.users.models import User
-from gearcore.wishlist.models import WishlistItem, Wishlist
+from gearcore.wishlist.models import Wishlist
+from gearcore.wishlist.models import WishlistItem
 
 
 class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):

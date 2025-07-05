@@ -89,7 +89,8 @@
                   {% if not request.resolver_match.url_name == 'create' %}id="cartToggle"{% endif %}>
             <i class="bi bi-bag fs-5"></i>
           </button>
-          <div {% if not request.resolver_match.url_name == 'create' %}id="cartWrapper"{% endif %}  class="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
+          <div {% if not request.resolver_match.url_name == 'create' %}id="cartWrapper"{% endif %}
+               class="cartWrapper">{% include 'carts/includes/included_cart.html' %}</div>
         </li>
         {% if user.is_authenticated %}
           {# ============: [START] Профіль авторизованого користувача :============== #}
