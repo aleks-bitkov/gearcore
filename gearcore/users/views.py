@@ -1,16 +1,13 @@
 from allauth.account.views import LoginView as AllauthLoginView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Prefetch
-from django.db.models import QuerySet
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 from django.views.generic import UpdateView
-from rest_framework.reverse import reverse_lazy
 
 from gearcore.carts.models import Cart
 from gearcore.common.mixins import CacheMixin
@@ -26,7 +23,6 @@ class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
     template_name = "users/user_detail.html"
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy("users:detail")
 
     def get_object(self, queryset=None):
         assert self.request.user.is_authenticated  # type guard
@@ -57,27 +53,22 @@ class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
 user_profile_view = UserProfileView.as_view()
 
 
-class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
-    model = User
-    fields = ["last_name", "first_name", "patronymic", "phone_number", "email"]
-    success_message = _("Інформацію успішно оновлено")
-
-    def get_success_url(self) -> str:
-        assert self.request.user.is_authenticated  # type guard
-        return self.request.user.get_absolute_url()
-
-    def get_object(self, queryset: QuerySet | None = None) -> User:
-        assert self.request.user.is_authenticated  # type guard
-        return self.request.user
-
-
-user_update_view = UserUpdateView.as_view()
-
-
 class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self) -> str:
+        referer = self.request.headers.get("referer", "")
+
+        logout_actions = [
+            "/accounts/logout/",
+            "/accounts/signup/",
+            "/accounts/confirm-email/",
+            "/accounts/password/reset/",
+        ]
+
+        if any(action in referer for action in logout_actions):
+            return reverse("main:index")
+
         return reverse("users:detail")
 
 
@@ -112,7 +103,7 @@ class UserWishlistView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         wishlist = Wishlist.objects.get(user=self.request.user)
-        wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).select_related("product")
+        wishlist_items = WishlistItem.objects.filter(wishlist=wishlist).select_related("variant")
 
         context["wishlist_items"] = wishlist_items
 
@@ -127,7 +118,7 @@ class AccountLoginView(AllauthLoginView):
         redirect_page = self.request.POST.get("next", None)
         if redirect_page and redirect_page != reverse("account_logout"):
             return redirect_page
-        return reverse_lazy("users:redirect")
+        return reverse("users:redirect")
 
     def form_valid(self, form):
         session_key = self.request.session.session_key
@@ -143,3 +134,6 @@ class AccountLoginView(AllauthLoginView):
             Cart.objects.filter(session_key=session_key).update(user=user)
 
         return response
+
+
+account_login_view = AccountLoginView.as_view()

@@ -62,7 +62,6 @@
           <button class="color-btn {% if forloop.counter0 == 0 %}active{% endif %}"
                   data-variant-id="{{ variant.id }}"
                   style="background-color: {{ variant.color.hex_code }}"></button>
-          {{ variant.id }}
         {% endfor %}
       </form>
       <div class="d-flex align-items-center justify-content-center gap-2">

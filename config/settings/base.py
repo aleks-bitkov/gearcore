@@ -116,7 +116,9 @@ AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
-LOGIN_URL = "account_login"
+LOGIN_URL = "users:account_login"
+# https://docs.djangoproject.com/en/dev/ref/settings/#logout-redirect-url
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
@@ -333,6 +335,9 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_ADAPTER = "gearcore.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
 ACCOUNT_FORMS = {"signup": "gearcore.users.forms.UserSignupForm"}
+
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 SOCIALACCOUNT_ADAPTER = "gearcore.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html

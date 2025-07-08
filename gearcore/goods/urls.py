@@ -2,6 +2,7 @@ from django.urls import path
 
 from gearcore.goods.views import catalog_view
 from gearcore.goods.views import product_color_change_view
+from gearcore.goods.views import product_comparison_view
 from gearcore.goods.views import product_view
 
 app_name = "goods"
@@ -11,4 +12,5 @@ urlpatterns = [
     path("search/", view=catalog_view, name="search"),
     path("product/<slug:slug>", view=product_view, name="product"),
     path("product-color-change/", view=product_color_change_view, name="product_color_change"),
+    path("compare/", view=product_comparison_view, name="compare"),
 ]

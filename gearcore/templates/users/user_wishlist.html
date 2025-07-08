@@ -7,11 +7,14 @@
       <div class="col-md-4">
         <div class="card bg-dark text-light h-100 border-secondary">
           <div class="card-body">
+            <img src="{{ item.variant.main_image.image.url }}"
+                 width="270"
+                 alt="{{ item.variant.motorcycle.name }}" />
             <h5 class="card-title">{{ item.product.name }}</h5>
             <p class="card-text">{{ item.product.description }}</p>
-            <span class="badge bg-success mb-2">В наличии</span>
-            <h6 class="card-subtitle mb-3 text-muted">{{ item.product.sell_price }}"</h6>
-            <a href="{% url "goods:product" item.product.slug %}"
+            <span class="badge bg-success mb-2">У наявності</span>
+            <h6 class="card-subtitle mb-3 text-white">{{ item.variant.final_price }} $</h6>
+            <a href="{% url "goods:product" item.variant.motorcycle.slug %}"
                class="btn btn-outline-light w-100">Детальніше</a>
           </div>
         </div>

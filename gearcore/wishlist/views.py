@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse
 from django.views import View
@@ -9,7 +10,7 @@ from gearcore.wishlist.models import Wishlist
 from gearcore.wishlist.models import WishlistItem
 
 
-class WishlistAddView(View):
+class WishlistAddView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         variant_id = data.get("variantId", "")
@@ -51,7 +52,7 @@ class WishlistAddView(View):
 wishlist_add_view = WishlistAddView.as_view()
 
 
-class WishlistRemoveView(View):
+class WishlistRemoveView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
         variant_id = data.get("variantId", "")

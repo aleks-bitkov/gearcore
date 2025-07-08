@@ -7,6 +7,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
+from gearcore.goods.mixins import GoodsMixins
 from gearcore.goods.models import Brand
 from gearcore.goods.models import Category
 from gearcore.goods.models import Engine
@@ -18,7 +19,7 @@ from gearcore.wishlist.models import Wishlist
 from gearcore.wishlist.models import WishlistItem
 
 
-class CatalogView(ListView):
+class CatalogView(GoodsMixins, ListView):
     model = Motorcycle
     template_name = "goods/catalog.html"
     context_object_name = "products"
@@ -84,7 +85,7 @@ class CatalogView(ListView):
 
         wishlist_id = []
         try:
-            wishlist = Wishlist.objects.get(user=self.request.user)
+            wishlist = self.get_wishlist(self.request)
             wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
             wishlist_id = [item.variant.id for item in wishlist_items]
         except Wishlist.DoesNotExist:
@@ -92,9 +93,11 @@ class CatalogView(ListView):
 
         variants = MotorcycleVariant.objects.all()
 
+        compare_list = self.request.session.get("compare_list", [])
         context["images"] = images
         context["variants"] = variants
         context["wishlist_id"] = wishlist_id
+        context["compare_list"] = compare_list
         return context
 
 
@@ -114,17 +117,24 @@ class ProductView(DetailView):
         context["title"] = f"{self.object.name} | GearCore"
         motorcycle = self.object
         wishlist_id = []
+
+        if self.request.user.is_authenticated:
+            try:
+                wishlist = Wishlist.objects.get(user=self.request.user)
+                wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
+                wishlist_id = [item.variant.id for item in wishlist_items]
+            except Wishlist.DoesNotExist:
+                ...
+
         try:
-            wishlist = Wishlist.objects.get(user=self.request.user)
-            wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
-            wishlist_id = [item.variant.id for item in wishlist_items]
-        except Wishlist.DoesNotExist:
-            ...
+            engine = Engine.objects.get(motorcycle=motorcycle)
+        except Engine.DoesNotExist:
+            engine = None
 
         selected_variant = motorcycle.default_variant
         context["images"] = VariantImage.objects.filter(variant=selected_variant)
         context["variants"] = MotorcycleVariant.objects.filter(motorcycle=motorcycle)
-        context["engine"] = Engine.objects.get(motorcycle=motorcycle)
+        context["engine"] = engine
         context["wishlist_id"] = wishlist_id
 
         return context
@@ -160,12 +170,14 @@ class ProductColorChangeView(View):
         images_info = [variant.image.url for variant in variants]
 
         wishlist_id = []
-        try:
-            wishlist = Wishlist.objects.get(user=self.request.user)
-            wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
-            wishlist_id = [item.variant.id for item in wishlist_items]
-        except Wishlist.DoesNotExist:
-            ...
+
+        if request.user.is_authenticated:
+            try:
+                wishlist = Wishlist.objects.get(user=self.request.user)
+                wishlist_items = WishlistItem.objects.filter(wishlist=wishlist)
+                wishlist_id = [item.variant.id for item in wishlist_items]
+            except Wishlist.DoesNotExist:
+                ...
 
         return JsonResponse(
             {
@@ -178,3 +190,37 @@ class ProductColorChangeView(View):
 
 
 product_color_change_view = ProductColorChangeView.as_view()
+
+
+#  ===============: Compare motorcycles :=========================
+# @method_decorator(ensure_csrf_cookie, name='dispatch')
+class ComparisonView(View):
+    def post(self, request):
+        data = json.loads(request.body)
+        action = data.get("action", "")
+        variant_id = int(data.get("variant_id", -1))
+
+        if action == "add":
+            return self.add_to_comparison(request, variant_id)
+        if action == "remove":
+            return self.remove_from_comparison(request, variant_id)
+        return JsonResponse({"debug_message": "не відома дія"}, status=400)
+
+    @staticmethod
+    def add_to_comparison(request, variant_id):
+        compare_list = request.session.get("compare_list", [])
+        if variant_id not in compare_list:
+            compare_list.append(variant_id)
+            request.session["compare_list"] = compare_list
+        return JsonResponse({"debug_message": "варіант товару додано до списку"}, status=200)
+
+    @staticmethod
+    def remove_from_comparison(request, variant_id):
+        compare_list = request.session.get("compare_list", [])
+        if variant_id in compare_list:
+            compare_list.remove(variant_id)
+            request.session["compare_list"] = compare_list
+        return JsonResponse({"debug_message": "варіант товару прибрано зі списку"}, status=200)
+
+
+product_comparison_view = ComparisonView.as_view()
